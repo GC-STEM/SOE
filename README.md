@@ -1,2 +1,1 @@
-# soe
-STEM Standard Operating Environment
+# STEM Operating Environment
