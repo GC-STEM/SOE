@@ -1,0 +1,6 @@
+# Core CI dependencies; separate from downstream instructional defaults.
+-r ../../.config/requirements-automation.txt
+EditorConfig==0.17.1
+json5==0.17.3
+PyYAML==6.0.3
+ruff==0.17.0

@@ -1,0 +1,9 @@
+# Legacy course automation dependencies; not used by repository CI.
+# Install with: python -m pip install -r .github/manifest/requirements.txt
+
+# Linter and formatter dependencies
+ruff
+
+# Testing dependencies
+pytest
+pytest-cov

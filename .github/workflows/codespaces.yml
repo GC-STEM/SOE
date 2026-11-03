@@ -1,0 +1,39 @@
+name: Codespaces SOE
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  runtime:
+    name: Ubuntu 24.04 / Python 3.12 container
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build headless SOE
+        run: docker build --tag gc-stem-soe:ci --file .devcontainer/Dockerfile .
+      - name: Test resolver and generated configuration with Python 3.12
+        run: |
+          docker run --rm \
+            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspaces/atlas,readonly" \
+            --workdir /workspaces/atlas gc-stem-soe:ci \
+            /opt/gc-stem/runtime/bin/python -m unittest discover \
+            -s .github/ci -p test_soe.py -v
+      - name: Test non-root SOE and isolated course setup
+        run: |
+          docker run --rm \
+            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspaces/atlas,readonly" \
+            --workdir /workspaces/atlas gc-stem-soe:ci \
+            /opt/gc-stem/runtime/bin/python .github/ci/smoke_codespaces.py

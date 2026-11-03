@@ -1,0 +1,4043 @@
+{
+  "$schema": "https://raw.githubusercontent.com/GC-STEM/.github/refs/heads/main/schemas/manifest.schema.json",
+  "schema_version": "3.2",
+  "manifest_type": "soe",
+  "baseline": {
+    "baseline_id": "stem_computing_baseline",
+    "display_name": "Standard Operating Environment",
+    "version": "1.0.0"
+  },
+  "automation_release": "1.0.4",
+  "control": {
+    "status": "draft",
+    "source_repository": "https://github.com/GC-STEM/atlas",
+    "change_summary": "Implement STEM leadership's approved previous-Ubuntu-LTS policy (latest LTS minus one): Ubuntu 24.04 LTS and its CPython 3.12.x runtime. Apply the same version line to Codio Boxes/VMs, native platform bindings, Codespaces and local Docker. Allow patch updates within the approved lines; changes to a new LTS/Python minor require a reviewed SOE release. Existing provider environments still require migration/qualification. Do not perform OS release upgrades or automatic interpreter downgrades. This implementation remains a draft pending release qualification."
+  },
+  "policy": {
+    "course_root": "${WORKSPACE_ROOT}",
+    "script_root": "${ATLAS_ROOT}/scripts",
+    "minimum_free_space_bytes": 5368709120,
+    "network_timeout_seconds": 60,
+    "allow_os_release_upgrade": false,
+    "student_cost_policy": "no_additional_course_fee",
+    "allowed_path_variables": [
+      "HOME",
+      "DESKTOP",
+      "COURSE_ROOT",
+      "SCRIPT_ROOT",
+      "LOG_DIR",
+      "TEMP",
+      "COURSE_REPOSITORY",
+      "ATLAS_ROOT",
+      "WORKSPACE_ROOT"
+    ],
+    "retry_profiles": {
+      "bounded_default": {
+        "maximum_attempts": 5,
+        "initial_delay_seconds": 5,
+        "backoff_multiplier": 2,
+        "maximum_delay_seconds": 60
+      }
+    },
+    "default_retry_profile_id": "bounded_default",
+    "integrity_algorithms": [
+      "sha256",
+      "sha384",
+      "sha512",
+      "package_signature",
+      "repository_signature",
+      "provider_verified"
+    ],
+    "version_management": {
+      "strategy": "satisfy_requirements",
+      "preserve_compatible_installations": true,
+      "allow_automatic_downgrade": false
+    }
+  },
+  "capabilities": {
+    "version_control_system": {
+      "display_name": "Version Control",
+      "required": true,
+      "implementation_kind": "command_line_tool",
+      "student_use": "Download assignment materials, track file changes, and optionally publish portfolio artifacts."
+    },
+    "source_hosting_client": {
+      "display_name": "Source-Code Hosting Client",
+      "required": true,
+      "implementation_kind": "external_service_client",
+      "student_use": "Authenticate with the approved source-code hosting service and manage course repositories.",
+      "depends_on": [
+        "version_control_system"
+      ],
+      "provider_profile_required": true
+    },
+    "programming_language_runtime": {
+      "display_name": "Programming Language Runtime",
+      "required": true,
+      "implementation_kind": "programming_runtime",
+      "student_use": "Run course software using a supported Python interpreter; courses may declare additional runtimes or stricter requirements when needed."
+    },
+    "test_runner": {
+      "display_name": "Test Runner",
+      "required": false,
+      "implementation_kind": "language_package",
+      "student_use": "Optional course-selected test runner, installed in that course's Python virtual environment.",
+      "depends_on": [
+        "programming_language_runtime"
+      ]
+    },
+    "coverage_reporter": {
+      "display_name": "Coverage Reporter",
+      "required": false,
+      "implementation_kind": "language_package",
+      "student_use": "Optional course-selected coverage reporting, installed in that course's Python virtual environment.",
+      "depends_on": [
+        "programming_language_runtime",
+        "test_runner"
+      ]
+    },
+    "source_code_ide": {
+      "display_name": "Source-Code IDE",
+      "required": true,
+      "implementation_kind": "ide",
+      "student_use": "Create, edit, run, and debug course source files.",
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "language_support": {
+      "display_name": "Python IDE Support",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Provide Python language services, interpreter selection, testing, and debugging in the IDE.",
+      "depends_on": [
+        "source_code_ide",
+        "programming_language_runtime"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "code_quality_tool": {
+      "display_name": "Code Quality Tool",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Provide linting and formatting feedback for readable Python code.",
+      "depends_on": [
+        "source_code_ide",
+        "programming_language_runtime"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "diagram_support": {
+      "display_name": "Diagram Support",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Open and edit course diagrams inside the IDE.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "spell_checker": {
+      "display_name": "Spell Checker",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Identify likely spelling errors in documentation, comments, and source files.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "vm_orchestration": {
+      "display_name": "Virtual Machine Orchestration",
+      "required": false,
+      "implementation_kind": "command_line_tool",
+      "student_use": "Launch the SOE or course environment using an installed, compatible Vagrant provider and box.",
+      "applies_to": {
+        "deployment_kinds": [
+          "bare_metal"
+        ]
+      }
+    },
+    "editorconfig_support": {
+      "display_name": "EditorConfig",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Apply repository EditorConfig formatting conventions in the editor.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "powershell_language_support": {
+      "display_name": "PowerShell",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Provide PowerShell language editing and debugging integration.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "python_language_services": {
+      "display_name": "Pylance",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Provide Python completion, type analysis, and language services.",
+      "depends_on": [
+        "source_code_ide",
+        "programming_language_runtime",
+        "language_support"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "markdown_preview_styles": {
+      "display_name": "GitHub Markdown preview styles",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Style Markdown previews to resemble GitHub rendering.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "markdown_linting": {
+      "display_name": "Markdownlint",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Check Markdown documents against configured style rules.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "markdown_authoring": {
+      "display_name": "Markdown All in One",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Provide Markdown authoring shortcuts and table-of-contents tools.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    },
+    "markdown_pdf_export": {
+      "display_name": "Markdown PDF",
+      "required": true,
+      "implementation_kind": "ide_extension",
+      "student_use": "Provide Markdown-to-PDF export integration in the editor.",
+      "depends_on": [
+        "source_code_ide"
+      ],
+      "applies_to": {
+        "session_types": [
+          "local_desktop",
+          "remote_desktop",
+          "browser_editor"
+        ]
+      }
+    }
+  },
+  "products": {
+    "git": {
+      "display_name": "Git",
+      "vendor_or_project": "Git project",
+      "product_kind": "command_line_tool",
+      "capability_roles": [
+        "version_control_system"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "license_identifier": "GPL-2.0-only",
+      "open_source": true,
+      "homepage": "https://git-scm.com/",
+      "documentation_uri": "https://git-scm.com/doc"
+    },
+    "github_cli": {
+      "display_name": "GitHub CLI",
+      "vendor_or_project": "GitHub",
+      "product_kind": "external_service_client",
+      "capability_roles": [
+        "source_hosting_client"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "license_identifier": "MIT",
+      "open_source": true,
+      "homepage": "https://cli.github.com/",
+      "documentation_uri": "https://cli.github.com/manual/"
+    },
+    "python": {
+      "display_name": "CPython 3.12",
+      "vendor_or_project": "Python Software Foundation",
+      "product_kind": "programming_runtime",
+      "capability_roles": [
+        "programming_language_runtime"
+      ],
+      "version_rule": {
+        "comparison": "compatible_range",
+        "value": ">=3.12,<3.13",
+        "comparison_adapter_id": "pep440_version"
+      },
+      "student_availability": "no_cost",
+      "license_identifier": "PSF-2.0",
+      "open_source": true,
+      "homepage": "https://www.python.org/",
+      "documentation_uri": "https://docs.python.org/3/",
+      "notes": "The approved STEM runtime is CPython 3.12.x on every platform. Patch updates within 3.12 are allowed; another minor series is not accepted as the SOE interpreter. Select an installed 3.12 interpreter or install it alongside other versions without replacing OS Python."
+    },
+    "pytest": {
+      "display_name": "pytest",
+      "vendor_or_project": "pytest development team",
+      "product_kind": "language_package",
+      "capability_roles": [
+        "test_runner"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "license_identifier": "MIT",
+      "open_source": true,
+      "homepage": "https://pytest.org/",
+      "documentation_uri": "https://docs.pytest.org/"
+    },
+    "pytest_cov": {
+      "display_name": "pytest-cov",
+      "vendor_or_project": "pytest-cov project",
+      "product_kind": "language_package",
+      "capability_roles": [
+        "coverage_reporter"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "license_identifier": "MIT",
+      "open_source": true,
+      "homepage": "https://github.com/pytest-dev/pytest-cov",
+      "documentation_uri": "https://pytest-cov.readthedocs.io/"
+    },
+    "visual_studio_code": {
+      "display_name": "Visual Studio Code",
+      "vendor_or_project": "Microsoft",
+      "product_kind": "ide",
+      "capability_roles": [
+        "source_code_ide"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "license_identifier": "LicenseRef-Microsoft-Visual-Studio-Code",
+      "open_source": false,
+      "homepage": "https://code.visualstudio.com/",
+      "documentation_uri": "https://code.visualstudio.com/docs"
+    },
+    "vscode_python": {
+      "display_name": "Python Extension for Visual Studio Code",
+      "vendor_or_project": "Microsoft",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "language_support"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=ms-python.python",
+      "documentation_uri": "https://code.visualstudio.com/docs/python/python-tutorial"
+    },
+    "vscode_ruff": {
+      "display_name": "Ruff Extension for Visual Studio Code",
+      "vendor_or_project": "Astral Software",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "code_quality_tool"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=charliermarsh.ruff",
+      "documentation_uri": "https://docs.astral.sh/ruff/editors/"
+    },
+    "vscode_drawio": {
+      "display_name": "Draw.io Integration for Visual Studio Code",
+      "vendor_or_project": "Henning Dieterichs",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "diagram_support"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=hediet.vscode-drawio",
+      "documentation_uri": "https://github.com/hediet/vscode-drawio"
+    },
+    "vscode_spell_checker": {
+      "display_name": "Code Spell Checker",
+      "vendor_or_project": "Street Side Software",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "spell_checker"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker",
+      "documentation_uri": "https://streetsidesoftware.com/vscode-spell-checker/"
+    },
+    "vagrant": {
+      "display_name": "Vagrant CLI",
+      "vendor_or_project": "HashiCorp",
+      "product_kind": "command_line_tool",
+      "capability_roles": [
+        "vm_orchestration"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://developer.hashicorp.com/vagrant",
+      "documentation_uri": "https://developer.hashicorp.com/vagrant/docs",
+      "notes": "Optional deferred VM tooling; never required by SOE setup."
+    },
+    "vscode_editorconfig": {
+      "display_name": "EditorConfig",
+      "vendor_or_project": "EditorConfig",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "editorconfig_support"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig"
+    },
+    "vscode_powershell": {
+      "display_name": "PowerShell",
+      "vendor_or_project": "ms-vscode",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "powershell_language_support"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=ms-vscode.powershell",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=ms-vscode.powershell"
+    },
+    "vscode_pylance": {
+      "display_name": "Pylance",
+      "vendor_or_project": "ms-python",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "python_language_services"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=ms-python.vscode-pylance"
+    },
+    "vscode_markdown_preview_styles": {
+      "display_name": "GitHub Markdown preview styles",
+      "vendor_or_project": "bierner",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "markdown_preview_styles"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=bierner.markdown-preview-github-styles"
+    },
+    "vscode_markdownlint": {
+      "display_name": "Markdownlint",
+      "vendor_or_project": "davidanson",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "markdown_linting"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=davidanson.vscode-markdownlint",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=davidanson.vscode-markdownlint"
+    },
+    "vscode_markdown_all_in_one": {
+      "display_name": "Markdown All in One",
+      "vendor_or_project": "yzhang",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "markdown_authoring"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one"
+    },
+    "vscode_markdown_pdf": {
+      "display_name": "Markdown PDF",
+      "vendor_or_project": "yzane",
+      "product_kind": "ide_extension",
+      "capability_roles": [
+        "markdown_pdf_export"
+      ],
+      "version_rule": {
+        "comparison": "presence_only"
+      },
+      "student_availability": "no_cost",
+      "homepage": "https://marketplace.visualstudio.com/items?itemName=yzane.markdown-pdf",
+      "documentation_uri": "https://marketplace.visualstudio.com/items?itemName=yzane.markdown-pdf"
+    }
+  },
+  "software_sources": {
+    "atlas_repository": {
+      "display_name": "Atlas Shared Baseline and Automation Repository",
+      "source_type": "source_repository",
+      "base_uri": "https://github.com/GC-STEM/atlas",
+      "adapter_id": "github_repository_source",
+      "allowed_hosts": [
+        "github.com",
+        "raw.githubusercontent.com"
+      ],
+      "integrity": {
+        "method": "repository_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "winget_default": {
+      "display_name": "WinGet Community Source",
+      "source_type": "os_repository",
+      "base_uri": "https://cdn.winget.microsoft.com/cache",
+      "adapter_id": "winget_source",
+      "allowed_hosts": [
+        "cdn.winget.microsoft.com"
+      ],
+      "integrity": {
+        "method": "provider_verified"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "microsoft_app_installer": {
+      "display_name": "Microsoft App Installer",
+      "source_type": "direct_download",
+      "base_uri": "https://aka.ms/getwinget",
+      "adapter_id": "microsoft_app_installer_source",
+      "allowed_hosts": [
+        "aka.ms"
+      ],
+      "integrity": {
+        "method": "provider_verified"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "homebrew_core": {
+      "display_name": "Homebrew Core",
+      "source_type": "vendor_repository",
+      "base_uri": "https://github.com/Homebrew/homebrew-core",
+      "adapter_id": "homebrew_core_source",
+      "allowed_hosts": [
+        "github.com",
+        "ghcr.io"
+      ],
+      "integrity": {
+        "method": "repository_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "homebrew_cask": {
+      "display_name": "Homebrew Cask",
+      "source_type": "vendor_repository",
+      "base_uri": "https://github.com/Homebrew/homebrew-cask",
+      "adapter_id": "homebrew_cask_source",
+      "allowed_hosts": [
+        "github.com",
+        "ghcr.io"
+      ],
+      "integrity": {
+        "method": "repository_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "apple_software_update": {
+      "display_name": "Apple Software Update",
+      "source_type": "os_repository",
+      "base_uri": "https://support.apple.com/downloads",
+      "adapter_id": "apple_software_update_source",
+      "allowed_hosts": [
+        "support.apple.com",
+        "swcdn.apple.com"
+      ],
+      "integrity": {
+        "method": "provider_verified"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "ubuntu_archive": {
+      "display_name": "Ubuntu Archive",
+      "source_type": "os_repository",
+      "base_uri": "https://archive.ubuntu.com/ubuntu/",
+      "adapter_id": "apt_source",
+      "allowed_hosts": [
+        "archive.ubuntu.com",
+        "security.ubuntu.com",
+        "us-east-1.ec2.archive.ubuntu.com"
+      ],
+      "integrity": {
+        "method": "package_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "github_cli_packages": {
+      "display_name": "GitHub CLI Package Repository",
+      "source_type": "vendor_repository",
+      "base_uri": "https://cli.github.com/packages",
+      "adapter_id": "apt_vendor_source",
+      "allowed_hosts": [
+        "cli.github.com"
+      ],
+      "integrity": {
+        "method": "package_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "microsoft_vscode_packages": {
+      "display_name": "Microsoft Visual Studio Code Package Repository",
+      "source_type": "vendor_repository",
+      "base_uri": "https://packages.microsoft.com/repos/code/",
+      "adapter_id": "apt_vendor_source",
+      "allowed_hosts": [
+        "packages.microsoft.com"
+      ],
+      "integrity": {
+        "method": "package_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "pypi": {
+      "display_name": "Python Package Index",
+      "source_type": "language_package_index",
+      "base_uri": "https://pypi.org/simple/",
+      "adapter_id": "python_package_index",
+      "allowed_hosts": [
+        "pypi.org",
+        "files.pythonhosted.org"
+      ],
+      "integrity": {
+        "method": "provider_verified"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "vscode_marketplace": {
+      "display_name": "Visual Studio Marketplace",
+      "source_type": "ide_marketplace",
+      "base_uri": "https://marketplace.visualstudio.com/",
+      "adapter_id": "vscode_marketplace_source",
+      "allowed_hosts": [
+        "marketplace.visualstudio.com",
+        "gallerycdn.vsassets.io"
+      ],
+      "integrity": {
+        "method": "provider_verified"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "hashicorp_homebrew": {
+      "display_name": "HashiCorp Homebrew Tap",
+      "source_type": "vendor_repository",
+      "base_uri": "https://github.com/hashicorp/homebrew-tap",
+      "adapter_id": "homebrew_cask_source",
+      "allowed_hosts": [
+        "github.com",
+        "raw.githubusercontent.com",
+        "releases.hashicorp.com"
+      ],
+      "integrity": {
+        "method": "checksum",
+        "algorithm": "sha256"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "hashicorp_apt": {
+      "display_name": "HashiCorp APT Repository",
+      "source_type": "vendor_repository",
+      "base_uri": "https://apt.releases.hashicorp.com",
+      "adapter_id": "apt_vendor_source",
+      "allowed_hosts": [
+        "apt.releases.hashicorp.com"
+      ],
+      "integrity": {
+        "method": "package_signature"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "github_boxes_releases": {
+      "display_name": "GC-STEM Box Release Assets",
+      "source_type": "release_assets",
+      "base_uri": "https://github.com/GC-STEM/boxes/releases",
+      "adapter_id": "github_release_assets",
+      "allowed_hosts": [
+        "github.com",
+        "release-assets.githubusercontent.com",
+        "objects.githubusercontent.com"
+      ],
+      "integrity": {
+        "method": "checksum",
+        "algorithm": "sha256"
+      },
+      "retry_profile_id": "bounded_default"
+    },
+    "github_codespaces": {
+      "display_name": "GitHub Codespaces Managed Editor",
+      "source_type": "hosted_service",
+      "base_uri": "https://github.com/features/codespaces",
+      "adapter_id": "codespaces_service",
+      "allowed_hosts": [
+        "github.com",
+        "github.dev",
+        "githubusercontent.com"
+      ],
+      "integrity": {
+        "method": "provider_verified"
+      },
+      "retry_profile_id": "bounded_default"
+    }
+  },
+  "provider_profiles": {
+    "github_com": {
+      "display_name": "GitHub.com",
+      "adapter_id": "github_cli_provider",
+      "service_uri": "https://github.com",
+      "client_product_id": "github_cli",
+      "api_base_uri": "https://api.github.com",
+      "authentication": {
+        "method": "browser_device_flow",
+        "interactive": true,
+        "secret_storage": "provider_cli",
+        "status_adapter_id": "github_cli_auth_status",
+        "login_adapter_id": "github_cli_auth_login"
+      },
+      "account_fields": {
+        "username": "login",
+        "account_id": "id",
+        "display_name": "name"
+      },
+      "privacy_identity": {
+        "mode": "provider_noreply_template",
+        "template": "${ACCOUNT_ID}+${USERNAME}@users.noreply.github.com",
+        "allowed_placeholders": [
+          "ACCOUNT_ID",
+          "USERNAME"
+        ]
+      },
+      "redacted_fields": [
+        "email",
+        "token",
+        "oauth_token",
+        "access_token",
+        "refresh_token"
+      ]
+    },
+    "github_com_automation": {
+      "display_name": "GitHub.com Noninteractive Automation",
+      "adapter_id": "github_cli_provider",
+      "service_uri": "https://github.com",
+      "client_product_id": "github_cli",
+      "api_base_uri": "https://api.github.com",
+      "authentication": {
+        "method": "environment_token",
+        "interactive": false,
+        "secret_storage": "environment",
+        "token_environment_variables": [
+          "GH_TOKEN",
+          "GITHUB_TOKEN"
+        ],
+        "status_adapter_id": "github_cli_auth_status"
+      },
+      "account_fields": {
+        "username": "login",
+        "account_id": "id",
+        "display_name": "name"
+      },
+      "privacy_identity": {
+        "mode": "provider_noreply_template",
+        "template": "${ACCOUNT_ID}+${USERNAME}@users.noreply.github.com",
+        "allowed_placeholders": [
+          "ACCOUNT_ID",
+          "USERNAME"
+        ]
+      },
+      "redacted_fields": [
+        "email",
+        "token",
+        "oauth_token",
+        "access_token",
+        "refresh_token"
+      ]
+    }
+  },
+  "platforms": {
+    "windows": {
+      "display_name": "Microsoft Windows",
+      "abbreviation": "win",
+      "enabled": true,
+      "reference_platform": false,
+      "platform_adapter_id": "windows_client",
+      "os": {
+        "family": "windows",
+        "name": "Microsoft Windows",
+        "releases": [
+          {
+            "release_id": "26H1",
+            "display_name": "Windows 11, version 26H1",
+            "support_end_date": "2028-03-14",
+            "security_updates_required": true
+          },
+          {
+            "release_id": "25H2",
+            "display_name": "Windows 11, version 25H2",
+            "support_end_date": "2027-10-12",
+            "security_updates_required": true
+          },
+          {
+            "release_id": "24H2",
+            "display_name": "Windows 11, version 24H2",
+            "support_end_date": "2026-10-13",
+            "security_updates_required": true
+          },
+          {
+            "release_id": "22H2",
+            "display_name": "Windows 10, version 22H2",
+            "minimum_build": "19045",
+            "support_end_date": "2025-10-14",
+            "security_updates_required": true
+          }
+        ],
+        "architectures": [
+          "x86_64"
+        ]
+      },
+      "script": {
+        "extension": ".ps1",
+        "interpreter_adapter_id": "windows_powershell",
+        "line_ending": "lf",
+        "filename_template": "{action}_{platform}{extension}"
+      },
+      "package_manager": {
+        "display_name": "WinGet",
+        "adapter_id": "winget",
+        "source_ids": [
+          "winget_default",
+          "microsoft_app_installer"
+        ],
+        "lock_scope": "system_package_manager"
+      },
+      "os_packages": {
+        "windows_app_installer": {
+          "display_name": "Windows App Installer",
+          "purpose": "Provide the WinGet package manager required by Windows lifecycle scripts.",
+          "package_identifier": "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe",
+          "required": true,
+          "source_id": "microsoft_app_installer",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "windows_appx",
+            "executable_names": [
+              "winget.exe"
+            ],
+            "package_identifiers": [
+              "Microsoft.DesktopAppInstaller_8wekyb3d8bbwe"
+            ]
+          },
+          "architectures": [
+            "x86_64",
+            "arm64"
+          ],
+          "category": "package_management_support"
+        }
+      },
+      "capability_bindings": {
+        "version_control_system": {
+          "product_id": "git",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "winget_package",
+          "source_id": "winget_default",
+          "package_identifier": "Git.Git",
+          "verification": {
+            "adapter_id": "winget_package",
+            "executable_names": [
+              "git.exe"
+            ],
+            "package_identifiers": [
+              "Git.Git"
+            ]
+          },
+          "settings_profile_ids": [
+            "git_course_defaults"
+          ]
+        },
+        "source_hosting_client": {
+          "product_id": "github_cli",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "winget_package",
+          "source_id": "winget_default",
+          "package_identifier": "GitHub.cli",
+          "verification": {
+            "adapter_id": "winget_package",
+            "executable_names": [
+              "gh.exe"
+            ],
+            "package_identifiers": [
+              "GitHub.cli"
+            ]
+          },
+          "provider_profile_id": "github_com",
+          "dependencies": [
+            "version_control_system"
+          ]
+        },
+        "programming_language_runtime": {
+          "product_id": "python",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "winget_package",
+          "source_id": "winget_default",
+          "package_identifier": "Python.Python.3.12",
+          "verification": {
+            "adapter_id": "winget_package",
+            "executable_names": [
+              "python.exe"
+            ],
+            "version_rule": {
+              "comparison": "compatible_range",
+              "value": ">=3.12,<3.13",
+              "comparison_adapter_id": "pep440_version"
+            }
+          }
+        },
+        "source_code_ide": {
+          "product_id": "visual_studio_code",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "winget_package",
+          "source_id": "winget_default",
+          "package_identifier": "Microsoft.VisualStudioCode",
+          "verification": {
+            "adapter_id": "winget_package",
+            "executable_names": [
+              "code.cmd"
+            ],
+            "package_identifiers": [
+              "Microsoft.VisualStudioCode"
+            ]
+          },
+          "settings_profile_ids": [
+            "vscode_course_defaults"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "language_support": {
+          "product_id": "vscode_python",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.python",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.python"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "code_quality_tool": {
+          "product_id": "vscode_ruff",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "charliermarsh.ruff",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "charliermarsh.ruff"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "diagram_support": {
+          "product_id": "vscode_drawio",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "hediet.vscode-drawio",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "hediet.vscode-drawio"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "spell_checker": {
+          "product_id": "vscode_spell_checker",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "streetsidesoftware.code-spell-checker",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "streetsidesoftware.code-spell-checker"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "vm_orchestration": {
+          "product_id": "vagrant",
+          "required": false,
+          "installation_scope": "system",
+          "installer_adapter_id": "winget_package",
+          "source_id": "winget_default",
+          "package_identifier": "Hashicorp.Vagrant",
+          "verification": {
+            "adapter_id": "winget_package",
+            "executable_names": [
+              "vagrant.exe"
+            ],
+            "package_identifiers": [
+              "Hashicorp.Vagrant"
+            ]
+          },
+          "applies_to": {
+            "deployment_kinds": [
+              "bare_metal"
+            ]
+          }
+        },
+        "editorconfig_support": {
+          "product_id": "vscode_editorconfig",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "EditorConfig.EditorConfig",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "EditorConfig.EditorConfig"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "powershell_language_support": {
+          "product_id": "vscode_powershell",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-vscode.powershell",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-vscode.powershell"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "python_language_services": {
+          "product_id": "vscode_pylance",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.vscode-pylance",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.vscode-pylance"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime",
+            "language_support"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_preview_styles": {
+          "product_id": "vscode_markdown_preview_styles",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "bierner.markdown-preview-github-styles",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "bierner.markdown-preview-github-styles"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_linting": {
+          "product_id": "vscode_markdownlint",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "davidanson.vscode-markdownlint",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "davidanson.vscode-markdownlint"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_authoring": {
+          "product_id": "vscode_markdown_all_in_one",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzhang.markdown-all-in-one",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzhang.markdown-all-in-one"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_pdf_export": {
+          "product_id": "vscode_markdown_pdf",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzane.markdown-pdf",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzane.markdown-pdf"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        }
+      },
+      "notes": "Windows 10 22H2 and supported Windows 11 releases use WinGet for system-level course software. Windows S mode is not supported for the local IDE."
+    },
+    "macos": {
+      "display_name": "Apple macOS",
+      "abbreviation": "mac",
+      "enabled": true,
+      "reference_platform": false,
+      "platform_adapter_id": "macos_homebrew_apple_silicon",
+      "os": {
+        "family": "macos",
+        "name": "macOS",
+        "releases": [
+          {
+            "release_id": "26",
+            "display_name": "macOS Tahoe 26",
+            "security_updates_required": true
+          },
+          {
+            "release_id": "15",
+            "display_name": "macOS Sequoia 15",
+            "security_updates_required": true
+          },
+          {
+            "release_id": "14",
+            "display_name": "macOS Sonoma 14",
+            "security_updates_required": true
+          }
+        ],
+        "architectures": [
+          "arm64"
+        ]
+      },
+      "script": {
+        "extension": ".zsh",
+        "interpreter_adapter_id": "macos_zsh",
+        "line_ending": "lf",
+        "filename_template": "{action}_{platform}{extension}"
+      },
+      "package_manager": {
+        "display_name": "Homebrew",
+        "adapter_id": "homebrew",
+        "source_ids": [
+          "homebrew_core",
+          "homebrew_cask",
+          "hashicorp_homebrew"
+        ],
+        "lock_scope": "user_package_manager"
+      },
+      "os_packages": {
+        "apple_command_line_tools": {
+          "display_name": "Apple Command Line Tools",
+          "purpose": "Provide compilers, Git support, and system development utilities required before Homebrew installation.",
+          "package_identifier": "Command Line Tools for Xcode",
+          "required": true,
+          "source_id": "apple_software_update",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apple_command_line_tools",
+            "executable_names": [
+              "xcrun"
+            ]
+          },
+          "architectures": [
+            "arm64"
+          ],
+          "category": "bootstrap_prerequisite"
+        }
+      },
+      "capability_bindings": {
+        "version_control_system": {
+          "product_id": "git",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "homebrew_formula",
+          "source_id": "homebrew_core",
+          "package_identifier": "git",
+          "verification": {
+            "adapter_id": "homebrew_formula",
+            "executable_names": [
+              "git"
+            ],
+            "package_identifiers": [
+              "git"
+            ]
+          },
+          "settings_profile_ids": [
+            "git_course_defaults"
+          ]
+        },
+        "source_hosting_client": {
+          "product_id": "github_cli",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "homebrew_formula",
+          "source_id": "homebrew_core",
+          "package_identifier": "gh",
+          "verification": {
+            "adapter_id": "homebrew_formula",
+            "executable_names": [
+              "gh"
+            ],
+            "package_identifiers": [
+              "gh"
+            ]
+          },
+          "provider_profile_id": "github_com",
+          "dependencies": [
+            "version_control_system"
+          ]
+        },
+        "programming_language_runtime": {
+          "product_id": "python",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "homebrew_formula",
+          "source_id": "homebrew_core",
+          "package_identifier": "python@3.12",
+          "verification": {
+            "adapter_id": "homebrew_formula",
+            "executable_names": [
+              "python3",
+              "python"
+            ],
+            "version_rule": {
+              "comparison": "compatible_range",
+              "value": ">=3.12,<3.13",
+              "comparison_adapter_id": "pep440_version"
+            }
+          }
+        },
+        "source_code_ide": {
+          "product_id": "visual_studio_code",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "homebrew_cask",
+          "source_id": "homebrew_cask",
+          "package_identifier": "visual-studio-code",
+          "verification": {
+            "adapter_id": "homebrew_cask",
+            "executable_names": [
+              "code"
+            ],
+            "package_identifiers": [
+              "visual-studio-code"
+            ]
+          },
+          "settings_profile_ids": [
+            "vscode_course_defaults"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "language_support": {
+          "product_id": "vscode_python",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.python",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.python"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "code_quality_tool": {
+          "product_id": "vscode_ruff",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "charliermarsh.ruff",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "charliermarsh.ruff"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "diagram_support": {
+          "product_id": "vscode_drawio",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "hediet.vscode-drawio",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "hediet.vscode-drawio"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "spell_checker": {
+          "product_id": "vscode_spell_checker",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "streetsidesoftware.code-spell-checker",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "streetsidesoftware.code-spell-checker"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "vm_orchestration": {
+          "product_id": "vagrant",
+          "required": false,
+          "installation_scope": "system",
+          "installer_adapter_id": "homebrew_cask",
+          "source_id": "hashicorp_homebrew",
+          "package_identifier": "hashicorp/tap/hashicorp-vagrant",
+          "verification": {
+            "adapter_id": "homebrew_cask",
+            "executable_names": [
+              "vagrant"
+            ],
+            "package_identifiers": [
+              "hashicorp/tap/hashicorp-vagrant"
+            ]
+          },
+          "applies_to": {
+            "deployment_kinds": [
+              "bare_metal"
+            ]
+          }
+        },
+        "editorconfig_support": {
+          "product_id": "vscode_editorconfig",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "EditorConfig.EditorConfig",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "EditorConfig.EditorConfig"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "powershell_language_support": {
+          "product_id": "vscode_powershell",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-vscode.powershell",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-vscode.powershell"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "python_language_services": {
+          "product_id": "vscode_pylance",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.vscode-pylance",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.vscode-pylance"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime",
+            "language_support"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_preview_styles": {
+          "product_id": "vscode_markdown_preview_styles",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "bierner.markdown-preview-github-styles",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "bierner.markdown-preview-github-styles"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_linting": {
+          "product_id": "vscode_markdownlint",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "davidanson.vscode-markdownlint",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "davidanson.vscode-markdownlint"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_authoring": {
+          "product_id": "vscode_markdown_all_in_one",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzhang.markdown-all-in-one",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzhang.markdown-all-in-one"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_pdf_export": {
+          "product_id": "vscode_markdown_pdf",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzane.markdown-pdf",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzane.markdown-pdf"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        }
+      },
+      "notes": "Supported macOS releases on Apple silicon use Homebrew for course software. The initial bootstrap obtains Apple Command Line Tools and Homebrew when necessary."
+    },
+    "cvd": {
+      "display_name": "Codio Virtual Desktop",
+      "abbreviation": "cvd",
+      "enabled": true,
+      "reference_platform": true,
+      "platform_adapter_id": "codio_ubuntu_apt_xfce",
+      "os": {
+        "family": "linux",
+        "name": "Ubuntu",
+        "releases": [
+          {
+            "release_id": "24.04",
+            "display_name": "Ubuntu 24.04 LTS",
+            "support_end_date": "2029-05-31",
+            "security_updates_required": true
+          }
+        ],
+        "architectures": [
+          "x86_64"
+        ],
+        "desktop_environment": "Xfce"
+      },
+      "script": {
+        "extension": ".sh",
+        "interpreter_adapter_id": "ubuntu_bash",
+        "line_ending": "lf",
+        "filename_template": "{action}_{platform}{extension}"
+      },
+      "package_manager": {
+        "display_name": "APT",
+        "adapter_id": "apt",
+        "source_ids": [
+          "ubuntu_archive",
+          "github_cli_packages",
+          "microsoft_vscode_packages"
+        ],
+        "lock_scope": "system_package_manager"
+      },
+      "os_packages": {
+        "ca_certificates": {
+          "display_name": "CA Certificates",
+          "purpose": "Provide trusted certificate authorities for secure package and source retrieval.",
+          "package_identifier": "ca-certificates",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "ca-certificates"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "security_support"
+        },
+        "curl": {
+          "display_name": "curl",
+          "purpose": "Provide HTTPS retrieval for repositories and controlled assets.",
+          "package_identifier": "curl",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "curl"
+            ],
+            "package_identifiers": [
+              "curl"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "bootstrap_prerequisite"
+        },
+        "gpg": {
+          "display_name": "GNU Privacy Guard",
+          "purpose": "Verify and manage trusted package-repository signing keys.",
+          "package_identifier": "gpg",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "gpg"
+            ],
+            "package_identifiers": [
+              "gpg"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "security_support"
+        },
+        "xdg_utils": {
+          "display_name": "XDG Utilities",
+          "purpose": "Provide desktop integration helpers for MIME and URL handling.",
+          "package_identifier": "xdg-utils",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "xdg-open",
+              "xdg-mime"
+            ],
+            "package_identifiers": [
+              "xdg-utils"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "desktop_file_utils": {
+          "display_name": "Desktop File Utilities",
+          "purpose": "Validate and maintain desktop launcher metadata.",
+          "package_identifier": "desktop-file-utils",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "desktop-file-validate",
+              "update-desktop-database"
+            ],
+            "package_identifiers": [
+              "desktop-file-utils"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "libsecret": {
+          "display_name": "Secret Service Library",
+          "purpose": "Provide secure desktop credential storage integration.",
+          "package_identifier": "libsecret-1-0",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "libsecret-1-0"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "tree": {
+          "display_name": "tree",
+          "purpose": "Display course directory structures for setup and troubleshooting.",
+          "package_identifier": "tree",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "tree"
+            ],
+            "package_identifiers": [
+              "tree"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "diagnostic_utility"
+        },
+        "xclip": {
+          "display_name": "xclip",
+          "purpose": "Provide X11 clipboard integration for browser-based and desktop authentication workflows.",
+          "package_identifier": "xclip",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "xclip"
+            ],
+            "package_identifiers": [
+              "xclip"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "numlockx": {
+          "display_name": "numlockx",
+          "purpose": "Enable Num Lock consistently in the Xfce desktop session.",
+          "package_identifier": "numlockx",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "numlockx"
+            ],
+            "package_identifiers": [
+              "numlockx"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "fonts_noto_color_emoji": {
+          "display_name": "Noto Color Emoji",
+          "purpose": "Provide color emoji glyphs for Visual Studio Code Markdown previews and other graphical applications.",
+          "package_identifier": "fonts-noto-color-emoji",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "fonts-noto-color-emoji"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "python_venv_support": {
+          "display_name": "Python Virtual Environment Support",
+          "purpose": "Enable isolated course-local Python environments without installing language packages into the system interpreter.",
+          "category": "runtime_support",
+          "package_identifier": "python3-venv",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "python3-venv"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ]
+        }
+      },
+      "capability_bindings": {
+        "version_control_system": {
+          "product_id": "git",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "ubuntu_archive",
+          "package_identifier": "git",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "git"
+            ],
+            "package_identifiers": [
+              "git"
+            ]
+          },
+          "settings_profile_ids": [
+            "git_course_defaults"
+          ]
+        },
+        "source_hosting_client": {
+          "product_id": "github_cli",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "github_cli_packages",
+          "package_identifier": "gh",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "gh"
+            ],
+            "package_identifiers": [
+              "gh"
+            ]
+          },
+          "provider_profile_id": "github_com",
+          "dependencies": [
+            "version_control_system"
+          ]
+        },
+        "programming_language_runtime": {
+          "product_id": "python",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "ubuntu_archive",
+          "package_identifier": "python3",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "python3",
+              "python"
+            ],
+            "version_rule": {
+              "comparison": "compatible_range",
+              "value": ">=3.12,<3.13",
+              "comparison_adapter_id": "pep440_version"
+            }
+          }
+        },
+        "source_code_ide": {
+          "product_id": "visual_studio_code",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "microsoft_vscode_packages",
+          "package_identifier": "code",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "code"
+            ],
+            "package_identifiers": [
+              "code"
+            ]
+          },
+          "settings_profile_ids": [
+            "vscode_course_defaults"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "language_support": {
+          "product_id": "vscode_python",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.python",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.python"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "code_quality_tool": {
+          "product_id": "vscode_ruff",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "charliermarsh.ruff",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "charliermarsh.ruff"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "diagram_support": {
+          "product_id": "vscode_drawio",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "hediet.vscode-drawio",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "hediet.vscode-drawio"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "spell_checker": {
+          "product_id": "vscode_spell_checker",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "streetsidesoftware.code-spell-checker",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "streetsidesoftware.code-spell-checker"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "editorconfig_support": {
+          "product_id": "vscode_editorconfig",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "EditorConfig.EditorConfig",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "EditorConfig.EditorConfig"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "powershell_language_support": {
+          "product_id": "vscode_powershell",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-vscode.powershell",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-vscode.powershell"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "python_language_services": {
+          "product_id": "vscode_pylance",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.vscode-pylance",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.vscode-pylance"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime",
+            "language_support"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_preview_styles": {
+          "product_id": "vscode_markdown_preview_styles",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "bierner.markdown-preview-github-styles",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "bierner.markdown-preview-github-styles"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_linting": {
+          "product_id": "vscode_markdownlint",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "davidanson.vscode-markdownlint",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "davidanson.vscode-markdownlint"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_authoring": {
+          "product_id": "vscode_markdown_all_in_one",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzhang.markdown-all-in-one",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzhang.markdown-all-in-one"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_pdf_export": {
+          "product_id": "vscode_markdown_pdf",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzane.markdown-pdf",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzane.markdown-pdf"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        }
+      },
+      "notes": "Approved STEM Linux standard: Ubuntu 24.04 LTS and CPython 3.12.x under the previous-LTS policy. Provision a matching image or OS; setup does not upgrade/downgrade an OS release."
+    },
+    "ubuntu_gnome": {
+      "display_name": "Ubuntu Desktop GNOME",
+      "abbreviation": "ubg",
+      "enabled": true,
+      "reference_platform": false,
+      "platform_adapter_id": "ubuntu_apt_gnome",
+      "os": {
+        "family": "linux",
+        "name": "Ubuntu",
+        "releases": [
+          {
+            "release_id": "24.04",
+            "display_name": "Ubuntu 24.04 LTS",
+            "support_end_date": "2029-05-31",
+            "security_updates_required": true
+          }
+        ],
+        "architectures": [
+          "x86_64"
+        ],
+        "desktop_environment": "GNOME"
+      },
+      "script": {
+        "extension": ".sh",
+        "interpreter_adapter_id": "ubuntu_bash",
+        "line_ending": "lf",
+        "filename_template": "{action}_{platform}{extension}"
+      },
+      "package_manager": {
+        "display_name": "APT",
+        "adapter_id": "apt",
+        "source_ids": [
+          "ubuntu_archive",
+          "github_cli_packages",
+          "microsoft_vscode_packages",
+          "hashicorp_apt"
+        ],
+        "lock_scope": "system_package_manager"
+      },
+      "os_packages": {
+        "ca_certificates": {
+          "display_name": "CA Certificates",
+          "purpose": "Provide trusted certificate authorities for secure package and source retrieval.",
+          "package_identifier": "ca-certificates",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "ca-certificates"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "security_support"
+        },
+        "curl": {
+          "display_name": "curl",
+          "purpose": "Provide HTTPS retrieval for repositories and controlled assets.",
+          "package_identifier": "curl",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "curl"
+            ],
+            "package_identifiers": [
+              "curl"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "bootstrap_prerequisite"
+        },
+        "gpg": {
+          "display_name": "GNU Privacy Guard",
+          "purpose": "Verify and manage trusted package-repository signing keys.",
+          "package_identifier": "gpg",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "gpg"
+            ],
+            "package_identifiers": [
+              "gpg"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "security_support"
+        },
+        "xdg_utils": {
+          "display_name": "XDG Utilities",
+          "purpose": "Provide desktop integration helpers for MIME and URL handling.",
+          "package_identifier": "xdg-utils",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "xdg-open",
+              "xdg-mime"
+            ],
+            "package_identifiers": [
+              "xdg-utils"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "desktop_file_utils": {
+          "display_name": "Desktop File Utilities",
+          "purpose": "Validate and maintain desktop launcher metadata.",
+          "package_identifier": "desktop-file-utils",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "desktop-file-validate",
+              "update-desktop-database"
+            ],
+            "package_identifiers": [
+              "desktop-file-utils"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "libsecret": {
+          "display_name": "Secret Service Library",
+          "purpose": "Provide secure desktop credential storage integration.",
+          "package_identifier": "libsecret-1-0",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "libsecret-1-0"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "tree": {
+          "display_name": "tree",
+          "purpose": "Display course directory structures for setup and troubleshooting.",
+          "package_identifier": "tree",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "tree"
+            ],
+            "package_identifiers": [
+              "tree"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "diagnostic_utility"
+        },
+        "xclip": {
+          "display_name": "xclip",
+          "purpose": "Provide X11 clipboard integration for browser-based and desktop authentication workflows.",
+          "package_identifier": "xclip",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "xclip"
+            ],
+            "package_identifiers": [
+              "xclip"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "desktop_integration"
+        },
+        "python_venv_support": {
+          "display_name": "Python Virtual Environment Support",
+          "purpose": "Enable isolated course-local Python environments without installing language packages into the system interpreter.",
+          "category": "runtime_support",
+          "package_identifier": "python3-venv",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "python3-venv"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ]
+        }
+      },
+      "capability_bindings": {
+        "version_control_system": {
+          "product_id": "git",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "ubuntu_archive",
+          "package_identifier": "git",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "git"
+            ],
+            "package_identifiers": [
+              "git"
+            ]
+          },
+          "settings_profile_ids": [
+            "git_course_defaults"
+          ]
+        },
+        "source_hosting_client": {
+          "product_id": "github_cli",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "github_cli_packages",
+          "package_identifier": "gh",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "gh"
+            ],
+            "package_identifiers": [
+              "gh"
+            ]
+          },
+          "provider_profile_id": "github_com",
+          "dependencies": [
+            "version_control_system"
+          ]
+        },
+        "programming_language_runtime": {
+          "product_id": "python",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "ubuntu_archive",
+          "package_identifier": "python3",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "python3",
+              "python"
+            ],
+            "version_rule": {
+              "comparison": "compatible_range",
+              "value": ">=3.12,<3.13",
+              "comparison_adapter_id": "pep440_version"
+            }
+          }
+        },
+        "source_code_ide": {
+          "product_id": "visual_studio_code",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "microsoft_vscode_packages",
+          "package_identifier": "code",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "code"
+            ],
+            "package_identifiers": [
+              "code"
+            ]
+          },
+          "settings_profile_ids": [
+            "vscode_course_defaults"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "language_support": {
+          "product_id": "vscode_python",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.python",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.python"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "code_quality_tool": {
+          "product_id": "vscode_ruff",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "charliermarsh.ruff",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "charliermarsh.ruff"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "diagram_support": {
+          "product_id": "vscode_drawio",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "hediet.vscode-drawio",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "hediet.vscode-drawio"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "spell_checker": {
+          "product_id": "vscode_spell_checker",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "streetsidesoftware.code-spell-checker",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "streetsidesoftware.code-spell-checker"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "vm_orchestration": {
+          "product_id": "vagrant",
+          "required": false,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "hashicorp_apt",
+          "package_identifier": "vagrant",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "vagrant"
+            ],
+            "package_identifiers": [
+              "vagrant"
+            ]
+          },
+          "applies_to": {
+            "deployment_kinds": [
+              "bare_metal"
+            ]
+          }
+        },
+        "editorconfig_support": {
+          "product_id": "vscode_editorconfig",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "EditorConfig.EditorConfig",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "EditorConfig.EditorConfig"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "powershell_language_support": {
+          "product_id": "vscode_powershell",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-vscode.powershell",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-vscode.powershell"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "python_language_services": {
+          "product_id": "vscode_pylance",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.vscode-pylance",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "ms-python.vscode-pylance"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime",
+            "language_support"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_preview_styles": {
+          "product_id": "vscode_markdown_preview_styles",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "bierner.markdown-preview-github-styles",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "bierner.markdown-preview-github-styles"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_linting": {
+          "product_id": "vscode_markdownlint",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "davidanson.vscode-markdownlint",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "davidanson.vscode-markdownlint"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_authoring": {
+          "product_id": "vscode_markdown_all_in_one",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzhang.markdown-all-in-one",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzhang.markdown-all-in-one"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_pdf_export": {
+          "product_id": "vscode_markdown_pdf",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "vscode_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzane.markdown-pdf",
+          "verification": {
+            "adapter_id": "vscode_extension",
+            "package_identifiers": [
+              "yzane.markdown-pdf"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "local_desktop",
+              "remote_desktop",
+              "browser_editor"
+            ]
+          }
+        }
+      },
+      "notes": "Approved STEM Linux standard: Ubuntu 24.04 LTS and CPython 3.12.x under the previous-LTS policy. Provision a matching image or OS; setup does not upgrade/downgrade an OS release."
+    },
+    "ubuntu_headless": {
+      "display_name": "Ubuntu Headless Runtime",
+      "abbreviation": "uhl",
+      "enabled": true,
+      "reference_platform": false,
+      "platform_adapter_id": "ubuntu_headless",
+      "os": {
+        "family": "linux",
+        "name": "Ubuntu",
+        "releases": [
+          {
+            "release_id": "24.04",
+            "display_name": "Ubuntu 24.04 LTS",
+            "support_end_date": "2029-05-31",
+            "security_updates_required": true
+          }
+        ],
+        "architectures": [
+          "x86_64"
+        ]
+      },
+      "script": {
+        "extension": ".sh",
+        "interpreter_adapter_id": "ubuntu_bash",
+        "line_ending": "lf",
+        "filename_template": "{action}_{platform}{extension}"
+      },
+      "package_manager": {
+        "display_name": "APT",
+        "adapter_id": "apt",
+        "source_ids": [
+          "ubuntu_archive",
+          "github_cli_packages"
+        ],
+        "lock_scope": "system_package_manager"
+      },
+      "os_packages": {
+        "ca_certificates": {
+          "display_name": "CA Certificates",
+          "purpose": "Provide trusted certificate authorities for secure package and source retrieval.",
+          "package_identifier": "ca-certificates",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "ca-certificates"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "security_support"
+        },
+        "curl": {
+          "display_name": "curl",
+          "purpose": "Provide HTTPS retrieval for repositories and controlled assets.",
+          "package_identifier": "curl",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "curl"
+            ],
+            "package_identifiers": [
+              "curl"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "bootstrap_prerequisite"
+        },
+        "gpg": {
+          "display_name": "GNU Privacy Guard",
+          "purpose": "Verify and manage trusted package-repository signing keys.",
+          "package_identifier": "gpg",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "gpg"
+            ],
+            "package_identifiers": [
+              "gpg"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "security_support"
+        },
+        "tree": {
+          "display_name": "tree",
+          "purpose": "Display course directory structures for setup and troubleshooting.",
+          "package_identifier": "tree",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "tree"
+            ],
+            "package_identifiers": [
+              "tree"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ],
+          "category": "diagnostic_utility"
+        },
+        "python_venv_support": {
+          "display_name": "Python Virtual Environment Support",
+          "purpose": "Enable isolated course-local Python environments without installing language packages into the system interpreter.",
+          "category": "runtime_support",
+          "package_identifier": "python3-venv",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "python3-venv"
+            ]
+          },
+          "architectures": [
+            "x86_64"
+          ]
+        },
+        "python_command_alias": {
+          "display_name": "python-is-python3",
+          "purpose": "Provide the cross-platform python command.",
+          "package_identifier": "python-is-python3",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "category": "runtime_support",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "python-is-python3"
+            ]
+          }
+        },
+        "python_package_support": {
+          "display_name": "python3-pip",
+          "purpose": "Bootstrap isolated course package installation.",
+          "package_identifier": "python3-pip",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "category": "runtime_support",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "python3-pip"
+            ]
+          }
+        },
+        "archive_support": {
+          "display_name": "unzip",
+          "purpose": "Extract course and installation archives.",
+          "package_identifier": "unzip",
+          "required": true,
+          "source_id": "ubuntu_archive",
+          "category": "runtime_support",
+          "version_rule": {
+            "comparison": "presence_only"
+          },
+          "verification": {
+            "adapter_id": "apt_package",
+            "package_identifiers": [
+              "unzip"
+            ]
+          }
+        }
+      },
+      "capability_bindings": {
+        "version_control_system": {
+          "product_id": "git",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "ubuntu_archive",
+          "package_identifier": "git",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "git"
+            ],
+            "package_identifiers": [
+              "git"
+            ]
+          }
+        },
+        "source_hosting_client": {
+          "product_id": "github_cli",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "github_cli_packages",
+          "package_identifier": "gh",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "gh"
+            ],
+            "package_identifiers": [
+              "gh"
+            ]
+          },
+          "provider_profile_id": "github_com_automation",
+          "dependencies": [
+            "version_control_system"
+          ]
+        },
+        "programming_language_runtime": {
+          "product_id": "python",
+          "required": true,
+          "installation_scope": "system",
+          "installer_adapter_id": "apt_package",
+          "source_id": "ubuntu_archive",
+          "package_identifier": "python3",
+          "verification": {
+            "adapter_id": "apt_package",
+            "executable_names": [
+              "python3",
+              "python"
+            ],
+            "version_rule": {
+              "comparison": "compatible_range",
+              "value": ">=3.12,<3.13",
+              "comparison_adapter_id": "pep440_version"
+            }
+          }
+        },
+        "source_code_ide": {
+          "product_id": "visual_studio_code",
+          "required": true,
+          "installation_scope": "provider_managed",
+          "installer_adapter_id": "codespaces_editor",
+          "source_id": "github_codespaces",
+          "provider_profile_id": "github_com_automation",
+          "verification": {
+            "adapter_id": "codespaces_editor",
+            "executable_names": [
+              "code"
+            ]
+          },
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "language_support": {
+          "product_id": "vscode_python",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.python",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "ms-python.python"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "code_quality_tool": {
+          "product_id": "vscode_ruff",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "charliermarsh.ruff",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "charliermarsh.ruff"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "diagram_support": {
+          "product_id": "vscode_drawio",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "hediet.vscode-drawio",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "hediet.vscode-drawio"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "spell_checker": {
+          "product_id": "vscode_spell_checker",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "streetsidesoftware.code-spell-checker",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "streetsidesoftware.code-spell-checker"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "editorconfig_support": {
+          "product_id": "vscode_editorconfig",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "EditorConfig.EditorConfig",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "EditorConfig.EditorConfig"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "powershell_language_support": {
+          "product_id": "vscode_powershell",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-vscode.powershell",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "ms-vscode.powershell"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "python_language_services": {
+          "product_id": "vscode_pylance",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "ms-python.vscode-pylance",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "ms-python.vscode-pylance"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide",
+            "programming_language_runtime",
+            "language_support"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_preview_styles": {
+          "product_id": "vscode_markdown_preview_styles",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "bierner.markdown-preview-github-styles",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "bierner.markdown-preview-github-styles"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_linting": {
+          "product_id": "vscode_markdownlint",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "davidanson.vscode-markdownlint",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "davidanson.vscode-markdownlint"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_authoring": {
+          "product_id": "vscode_markdown_all_in_one",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzhang.markdown-all-in-one",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "yzhang.markdown-all-in-one"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        },
+        "markdown_pdf_export": {
+          "product_id": "vscode_markdown_pdf",
+          "required": true,
+          "installation_scope": "user",
+          "installer_adapter_id": "devcontainer_extension",
+          "source_id": "vscode_marketplace",
+          "package_identifier": "yzane.markdown-pdf",
+          "verification": {
+            "adapter_id": "devcontainer_extension",
+            "package_identifiers": [
+              "yzane.markdown-pdf"
+            ]
+          },
+          "dependencies": [
+            "source_code_ide"
+          ],
+          "applies_to": {
+            "session_types": [
+              "browser_editor"
+            ]
+          }
+        }
+      },
+      "notes": "Approved STEM Linux standard: Ubuntu 24.04 LTS and CPython 3.12.x under the previous-LTS policy. Provision a matching image or OS; setup does not upgrade/downgrade an OS release. Headless runtime; Codespaces manages VS Code."
+    }
+  },
+  "deployment_profiles": {
+    "codio_cvd": {
+      "display_name": "Codio Virtual Desktop Course Environment",
+      "enabled": true,
+      "reference_profile": true,
+      "platform_id": "cvd",
+      "deployment_kind": "hosted_virtual_desktop",
+      "desktop_environment": "Xfce",
+      "session_type": "remote_desktop",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "reset_method": "provider_reset",
+      "allowed_workflow_ids": [
+        "cvd_provider_baseline_administrator",
+        "cvd_course_master_student",
+        "cvd_periodic_maintenance"
+      ],
+      "notes": "Reference CVD/VM deployment target: Ubuntu 24.04 LTS with CPython 3.12.x. Codio Boxes and VMs are being standardized on this pair; provision and qualify the matching provider image.",
+      "provider_name": "Codio",
+      "profile_adapter_id": "codio_virtual_desktop",
+      "execution_context": "hosted"
+    },
+    "windows_bare_metal": {
+      "display_name": "Windows Bare-Metal Computer",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "windows",
+      "deployment_kind": "bare_metal",
+      "session_type": "local_desktop",
+      "architecture": "x86_64",
+      "reset_method": "fresh_os_install",
+      "allowed_workflow_ids": [
+        "local_initial_install",
+        "local_periodic_maintenance"
+      ],
+      "notes": "Supported Windows 10 or Windows 11 computer outside S mode.",
+      "execution_context": "local"
+    },
+    "windows_sandbox": {
+      "display_name": "Windows Sandbox",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "windows",
+      "deployment_kind": "other",
+      "session_type": "local_desktop",
+      "architecture": "x86_64",
+      "reset_method": "image_reset",
+      "allowed_workflow_ids": [
+        "local_initial_install",
+        "local_periodic_maintenance"
+      ],
+      "notes": "Faculty and development test profile; not a student production environment.",
+      "provider_name": "Microsoft",
+      "profile_adapter_id": "windows_sandbox",
+      "execution_context": "local"
+    },
+    "macos_bare_metal": {
+      "display_name": "macOS Apple Silicon Bare-Metal Computer",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "macos",
+      "deployment_kind": "bare_metal",
+      "session_type": "local_desktop",
+      "architecture": "arm64",
+      "reset_method": "fresh_os_install",
+      "allowed_workflow_ids": [
+        "local_initial_install",
+        "local_periodic_maintenance"
+      ],
+      "notes": "Clean supported macOS installation on Apple silicon used for platform conformance testing.",
+      "execution_context": "local"
+    },
+    "ubuntu_gnome_bare_metal": {
+      "display_name": "Ubuntu GNOME Bare-Metal Computer",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "ubuntu_gnome",
+      "deployment_kind": "bare_metal",
+      "desktop_environment": "GNOME",
+      "session_type": "local_desktop",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "reset_method": "fresh_os_install",
+      "allowed_workflow_ids": [
+        "local_initial_install",
+        "local_periodic_maintenance"
+      ],
+      "notes": "Native Ubuntu GNOME deployment using the approved Ubuntu 24.04 LTS/CPython 3.12.x standard.",
+      "execution_context": "local"
+    },
+    "ubuntu_vagrant_guest": {
+      "display_name": "SOE Ubuntu Desktop Vagrant Guest",
+      "enabled": false,
+      "reference_profile": false,
+      "platform_id": "ubuntu_gnome",
+      "deployment_kind": "local_virtual_machine",
+      "execution_context": "local",
+      "session_type": "local_desktop",
+      "desktop_environment": "GNOME",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "profile_adapter_id": "vagrant_guest",
+      "reset_method": "image_reset",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Planned SOE desktop guest. Launch with a compatible installed provider and released provider/architecture-specific box. Vagrant and hypervisors belong on the host and are excluded from guest requirements. No box release is assumed to exist."
+    },
+    "github_codespaces": {
+      "display_name": "GitHub Codespaces SOE or CSO",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "ubuntu_headless",
+      "deployment_kind": "container",
+      "execution_context": "codespaces",
+      "session_type": "browser_editor",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "provider_name": "GitHub Codespaces",
+      "profile_adapter_id": "codespaces_devcontainer",
+      "reset_method": "provider_reset",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Headless emergency student environment and faculty verification using the approved Ubuntu 24.04 LTS/CPython 3.12.x standard and selected course CSO. Access and funding remain subject to actual GitHub account/organization policy."
+    },
+    "github_actions_ubuntu": {
+      "display_name": "GitHub Actions Ubuntu Verification Runtime",
+      "enabled": false,
+      "reference_profile": false,
+      "platform_id": "ubuntu_headless",
+      "deployment_kind": "cloud_virtual_machine",
+      "execution_context": "github_actions",
+      "session_type": "headless",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "provider_name": "GitHub Actions",
+      "profile_adapter_id": "github_actions_runner",
+      "reset_method": "image_reset",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Planned explicit Ubuntu 24.04 runner target. Verify manifests, resolution, and runtime requirements without desktop installation, personal settings, or interactive login. VM startup qualification requires a separately suitable runner; nested virtualization is not assumed."
+    }
+  },
+  "lifecycle_workflows": {
+    "local_initial_install": {
+      "display_name": "Local Initial Installation",
+      "deployment_profile_ids": [
+        "windows_bare_metal",
+        "windows_sandbox",
+        "macos_bare_metal",
+        "ubuntu_gnome_bare_metal"
+      ],
+      "operating_roles": [
+        "local_user"
+      ],
+      "starting_state_id": "local_unmanaged_environment",
+      "ordered_actions": [
+        "prepare",
+        "install",
+        "configure",
+        "verify"
+      ],
+      "success_transitions": {
+        "prepare": "install",
+        "install": "configure",
+        "configure": "verify",
+        "verify": "complete"
+      },
+      "interaction_mode": "interactive"
+    },
+    "local_periodic_maintenance": {
+      "display_name": "Local Periodic Maintenance",
+      "deployment_profile_ids": [
+        "windows_bare_metal",
+        "windows_sandbox",
+        "macos_bare_metal",
+        "ubuntu_gnome_bare_metal"
+      ],
+      "operating_roles": [
+        "local_user"
+      ],
+      "starting_state_id": "initialized_environment",
+      "ordered_actions": [
+        "update",
+        "verify"
+      ],
+      "update_mode": "periodic_maintenance",
+      "success_transitions": {
+        "update": "verify",
+        "verify": "complete"
+      },
+      "interaction_mode": "interactive"
+    },
+    "cvd_provider_baseline_administrator": {
+      "display_name": "CVD Provider Baseline Administrator Initialization",
+      "deployment_profile_ids": [
+        "codio_cvd"
+      ],
+      "operating_roles": [
+        "cvd_administrator"
+      ],
+      "starting_state_id": "provider_baseline_master",
+      "ordered_actions": [
+        "prepare",
+        "update",
+        "install",
+        "configure",
+        "verify"
+      ],
+      "update_mode": "initial_provider_baseline",
+      "success_transitions": {
+        "prepare": "update",
+        "update": "install",
+        "install": "configure",
+        "configure": "verify",
+        "verify": "complete"
+      },
+      "interaction_mode": "interactive"
+    },
+    "cvd_course_master_student": {
+      "display_name": "CVD STEM Course Master Student Initialization",
+      "deployment_profile_ids": [
+        "codio_cvd"
+      ],
+      "operating_roles": [
+        "cvd_student"
+      ],
+      "starting_state_id": "course_master",
+      "ordered_actions": [
+        "prepare",
+        "update",
+        "configure",
+        "verify"
+      ],
+      "update_mode": "initial_course_master",
+      "success_transitions": {
+        "prepare": "update",
+        "update": "configure",
+        "configure": "verify",
+        "verify": "complete"
+      },
+      "interaction_mode": "interactive"
+    },
+    "cvd_periodic_maintenance": {
+      "display_name": "CVD Periodic Maintenance",
+      "deployment_profile_ids": [
+        "codio_cvd"
+      ],
+      "operating_roles": [
+        "cvd_administrator",
+        "cvd_student"
+      ],
+      "starting_state_id": "initialized_environment",
+      "ordered_actions": [
+        "update",
+        "verify"
+      ],
+      "update_mode": "periodic_maintenance",
+      "success_transitions": {
+        "update": "verify",
+        "verify": "complete"
+      },
+      "interaction_mode": "interactive"
+    },
+    "runtime_initial_install": {
+      "display_name": "Noninteractive Runtime Initial Installation",
+      "deployment_profile_ids": [
+        "ubuntu_vagrant_guest",
+        "github_codespaces",
+        "github_actions_ubuntu"
+      ],
+      "operating_roles": [
+        "automation_service"
+      ],
+      "interaction_mode": "noninteractive",
+      "starting_state_id": "uninitialized_runtime",
+      "ordered_actions": [
+        "prepare",
+        "install",
+        "configure",
+        "verify"
+      ],
+      "success_transitions": {
+        "prepare": "install",
+        "install": "configure",
+        "configure": "verify",
+        "verify": "complete"
+      },
+      "notes": "Resolve standalone SOE or course CSO, select the runtime deployment, and provision only applicable requirements. Skip interactive login and personal/global settings; consume ambient credentials only when an operation needs access, never prompt or persist token values."
+    },
+    "runtime_verify": {
+      "display_name": "Noninteractive Runtime Verification",
+      "deployment_profile_ids": [
+        "ubuntu_vagrant_guest",
+        "github_codespaces",
+        "github_actions_ubuntu"
+      ],
+      "operating_roles": [
+        "automation_service"
+      ],
+      "interaction_mode": "noninteractive",
+      "starting_state_id": "uninitialized_runtime",
+      "ordered_actions": [
+        "verify"
+      ],
+      "success_transitions": {
+        "verify": "complete"
+      },
+      "notes": "Read-only verification of the selected runtime. Report unmet requirements; do not install, update, authenticate interactively, or require equality with a reference machine."
+    }
+  },
+  "managed_settings": {
+    "git_course_defaults": {
+      "display_name": "STEM Git Defaults",
+      "target_capability_role": "version_control_system",
+      "scope": "user",
+      "settings_adapter_id": "git_global_config",
+      "platform_ids": [
+        "windows",
+        "macos",
+        "cvd",
+        "ubuntu_gnome"
+      ],
+      "merge_policy": "replace_managed_keys",
+      "values": {
+        "init.defaultBranch": "main",
+        "core.autocrlf": "input",
+        "push.autoSetupRemote": true,
+        "core.editor": "code --wait"
+      },
+      "verification_adapter_id": "git_global_config_verify",
+      "applies_to": {
+        "deployment_profile_ids": [
+          "codio_cvd",
+          "windows_bare_metal",
+          "windows_sandbox",
+          "macos_bare_metal",
+          "ubuntu_gnome_bare_metal"
+        ]
+      }
+    },
+    "vscode_course_defaults": {
+      "display_name": "STEM Visual Studio Code Defaults",
+      "target_capability_role": "source_code_ide",
+      "scope": "user",
+      "settings_adapter_id": "vscode_user_settings",
+      "platform_ids": [
+        "windows",
+        "macos",
+        "cvd",
+        "ubuntu_gnome"
+      ],
+      "merge_policy": "merge_preserve_unmanaged",
+      "values": {
+        "files.eol": "\n",
+        "editor.formatOnSave": true,
+        "[python]": {
+          "editor.defaultFormatter": "charliermarsh.ruff"
+        }
+      },
+      "verification_adapter_id": "vscode_user_settings_verify",
+      "applies_to": {
+        "deployment_profile_ids": [
+          "codio_cvd",
+          "windows_bare_metal",
+          "windows_sandbox",
+          "macos_bare_metal",
+          "ubuntu_gnome_bare_metal"
+        ]
+      }
+    }
+  },
+  "managed_assets": {},
+  "obsolete_components": {},
+  "logging": {
+    "format_version": "1",
+    "directory": "${WORKSPACE_ROOT}/logs",
+    "filename_template": "{action}_{platform}_{timestamp}.log",
+    "encoding": "utf-8",
+    "retention": {
+      "maximum_files": 50,
+      "maximum_age_days": 180
+    },
+    "redaction": {
+      "adapter_id": "standard_redaction",
+      "prohibited_field_names": [
+        "password",
+        "token",
+        "access_token",
+        "refresh_token",
+        "private_key",
+        "browser_data",
+        "complete_personal_email"
+      ]
+    },
+    "support_bundle": {
+      "explicit_confirmation_required": true,
+      "allowed_content_types": [
+        "sanitized_log",
+        "sanitized_verification_report",
+        "manifest_release_summary",
+        "platform_facts",
+        "version_summary"
+      ],
+      "prohibited_content_types": [
+        "student_source_files",
+        "repository_contents",
+        "version_control_history",
+        "authentication_data",
+        "browser_data"
+      ]
+    }
+  },
+  "automation_release_date_time_group": "2026-09-07-14-30",
+  "override_permissions": {},
+  "virtualization": {
+    "default_provider": "virtualbox",
+    "reference_provider": "virtualbox",
+    "install_provider_automatically": false,
+    "provider_selection": "vagrant_native",
+    "box_repository_source_id": "github_boxes_releases"
+  },
+  "box_artifacts": {
+    "soe_virtualbox_amd64": {
+      "display_name": "Planned SOE VirtualBox AMD64 Box",
+      "enabled": false,
+      "box_name": "GC-STEM/soe",
+      "provider_name": "virtualbox",
+      "architecture": "amd64",
+      "guest_deployment_profile_id": "ubuntu_vagrant_guest",
+      "source_id": "github_boxes_releases",
+      "notes": "Build the shared SOE box first; SOE-only courses reuse it. Add real release version and complete single-file or multipart distribution with verified SHA-256 metadata before enabling. GitHub release parts must each be under 2 GiB. Reconstruct and verify multipart boxes on the host before Vagrant imports them."
+    }
+  },
+  "launch_profiles": {
+    "soe_vagrant": {
+      "display_name": "Launch SOE or CSO with Vagrant",
+      "enabled": false,
+      "kind": "vagrant",
+      "runtime_available": true,
+      "repository_context": "selected_checkout",
+      "vagrantfile_path": "Vagrantfile",
+      "deployment_profile_id": "ubuntu_vagrant_guest",
+      "box_artifact_ids": [
+        "soe_virtualbox_amd64"
+      ],
+      "notes": "Planned entry point: run vagrant up in Atlas for the SOE or in a course checkout for its CSO. Respect explicit provider and environment preferences; prefer VirtualBox otherwise. Enable only after launcher, host acquisition, guest provisioning, and matching box artifacts are implemented and qualified."
+    },
+    "github_codespaces": {
+      "display_name": "Run in GitHub Codespaces",
+      "enabled": true,
+      "kind": "codespaces",
+      "runtime_available": true,
+      "repository_context": "selected_checkout",
+      "deployment_profile_id": "github_codespaces",
+      "devcontainer_path": ".devcontainer/devcontainer.json",
+      "launch_uri_template": "https://codespaces.new/{owner}/{repository}",
+      "notes": "Implemented by scripts/python/launch_codespaces.py. Resolves the selected checkout's origin and branch; validates its Codespaces configuration before opening GitHub's creation page. GitHub confirms access, machine selection, and billing."
+    },
+    "vscode_web": {
+      "display_name": "Edit in VS Code for Web",
+      "enabled": true,
+      "kind": "vscode_web",
+      "runtime_available": false,
+      "repository_context": "selected_checkout",
+      "launch_uri_template": "https://github.dev/{owner}/{repository}",
+      "configuration_paths": [
+        ".vscode/settings.json",
+        ".vscode/extensions.json"
+      ],
+      "notes": "Browser editing and commits with supported workspace settings/extensions; native Python execution, terminal tasks, and debugging require Codespaces or another compute runtime. Existing Actions may provide checks after a commit. Configuration paths are optional editor inputs, not evidence of installed runtime capabilities. Private faculty access remains enforced by GitHub."
+    }
+  }
+}

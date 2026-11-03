@@ -1,0 +1,3 @@
+# Shared SOE resolver dependencies, isolated from course environments.
+jsonschema==4.25.1
+packaging==25.0

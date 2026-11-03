@@ -1,0 +1,26 @@
+# Shared link policy. Both jobs use fresh results; no persistent success cache.
+hidden = true
+no_progress = true
+include_fragments = "anchor-only"
+include_verbatim = false
+include_mail = false
+max_retries = 2
+retry_wait_time = 2
+timeout = 20
+max_concurrency = 8
+host_concurrency = 2
+host_request_interval = "250ms"
+max_redirects = 10
+accept = ["200..=299"]
+accept_timeouts = false
+insecure = false
+
+# No URL exclusions initially. A login page, rate limit, or bot-blocked request
+# is a review finding, not proof that the destination is broken or verified.
+# Add only precise, documented exceptions after manual verification.
+# Private faculty wiki requires authorized GitHub access.
+# Manually verify while signed in with faculty access before adding this
+# exception, and whenever the destination or access policy changes.
+exclude = [
+    '^https://github\.com/GC-STEM/crs000-faculty/wiki/Support-for-Faculty$',
+]

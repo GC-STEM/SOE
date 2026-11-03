@@ -1,0 +1,56 @@
+name: Internal Links
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Monday, 11:17 UTC (07:17 EDT / 06:17 EST).
+    - cron: "17 11 * * 1"
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  internal-links:
+    name: Internal documentation links
+    if: github.repository_owner == 'GC-STEM'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: "3.12"
+      - name: Install Core CI dependencies
+        run: python -m pip install --disable-pip-version-check -r .github/ci/requirements.txt
+      - name: Install pinned Lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          lycheeVersion: v0.24.2
+          args: --version
+          failIfEmpty: false
+          jobSummary: false
+          token: ""
+      - name: Check internal links
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: |
+          python .github/ci/check_links.py --mode internal \
+            --output "$RUNNER_TEMP/internal-links.md"
+      - name: Preserve link report
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: internal-links
+          path: ${{ runner.temp }}/internal-links.md
+          if-no-files-found: warn
+          retention-days: 14

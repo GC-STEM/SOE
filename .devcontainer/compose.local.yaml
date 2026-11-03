@@ -1,0 +1,17 @@
+# Local Docker launch settings; paths are resolved on the Docker host.
+services:
+  soe:
+    image: gc-stem-soe:local
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    init: true
+    stdin_open: true
+    tty: true
+    working_dir: /home/vscode/Repos
+    volumes:
+      - type: bind
+        source: "${HOME:-${USERPROFILE:?Set HOME or USERPROFILE to your home directory}}/Repos"
+        target: /home/vscode/Repos
+        bind:
+          create_host_path: false
