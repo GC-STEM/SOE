@@ -1,0 +1,216 @@
+{
+  "editor.rulers": [72, 80],
+  "editor.minimap.enabled": false,
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": true,
+  "editor.guides.indentation": true,
+  "breadcrumbs.enabled": true,
+  "workbench.editorAssociations": {
+    "**/notes/**/*.md": "vscode.markdown.editor",
+    "*.md": "vscode.markdown.preview.editor",
+    "*.markdown": "vscode.markdown.preview.editor"
+  },
+  "files.associations": {
+    "CODEOWNERS": "plaintext",
+    "LICENSE": "plaintext",
+    "pseudocode.txt": "plaintext",
+    ".gitattributes": "properties",
+    ".gitignore": "properties"
+  },
+  "files.readonlyInclude": {
+    "**/*": true
+  },
+  "files.autoSave": "afterDelay",
+  "files.autoSaveDelay": 1000,
+  "files.eol": "\r\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.exclude": {
+    "**/.github": false,
+    "**/.idea": false,
+    "**/.settings": false,
+    "**/.vscode": false,
+    "**/.vscodeedu": false,
+    "**/*.code-workspace": false,
+    ".editorconfig": false,
+    ".gitattributes": false,
+    ".gitignore": false,
+    "LICENSE": false,
+    "pyproject.toml": false
+  },
+  "search.exclude": {
+    "**/.github": false,
+    "**/.idea": false,
+    "**/.settings": false,
+    "**/.vscode": false,
+    "**/.vscodeedu": false,
+    "**/*.code-workspace": false,
+    ".editorconfig": false,
+    ".gitattributes": false,
+    ".gitignore": false,
+    "LICENSE": false,
+    "pyproject.toml": false
+  },
+  "[dockerfile]": {
+    "files.eol": "\n"
+  },
+  "[ini]": {
+    "files.eol": "\n"
+  },
+  "[json]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "files.eol": "\n"
+  },
+  "[jsonc]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.defaultFormatter": "vscode.json-language-features",
+    "files.eol": "\n"
+  },
+  "[makefile]": {
+    "files.eol": "\n"
+  },
+  "[markdown]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "editor.wordWrap": "on",
+    "files.eol": "\r\n"
+  },
+  "[pip-requirements]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.trimAutoWhitespace": true,
+    "files.eol": "\r\n"
+  },
+  "[plaintext]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.quickSuggestions": {
+      "strings": true,
+      "comments": true,
+      "other": true
+    },
+    "files.eol": "\r\n"
+  },
+  "[properties]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "files.eol": "\n"
+  },
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.detectIndentation": false,
+    "files.eol": "\r\n"
+  },
+  "[shellscript]": {
+    "files.eol": "\n"
+  },
+  "[toml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "files.eol": "\n"
+  },
+  "[xml]": {
+    "files.eol": "\n"
+  },
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.insertSpaces": true,
+    "editor.autoIndent": "advanced",
+    "files.eol": "\n"
+  },
+  "python.terminal.executeInFileDir": true,
+  "markdown.extension.completion.enabled": false,
+  "markdown.extension.list.toggle.candidate-markers": ["*", "1."],
+  "markdown.extension.preview.autoShowPreviewToSide": false,
+  "markdown.extension.toc.levels": "2..2",
+  "markdown.extension.toc.orderedList": true,
+  "markdown.extension.toc.slugifyMode": "github",
+  "markdown.extension.toc.updateOnSave": true,
+
+  "markdown-pdf.format": "Letter",
+  "markdown-pdf.convertOnSave": false,
+  "markdown-pdf.highlightStyle": "github.css",
+  "markdown-pdf.printBackground": true,
+
+  "cSpell.words": [
+    "abstra",
+    "Abstra",
+    "addopts",
+    "Apifox",
+    "bacpac",
+    "Brightspace",
+    "celerybeat",
+    "codio",
+    "Codio",
+    "codz",
+    "compileall",
+    "Connor",
+    "cython",
+    "Cython",
+    "dacpac",
+    "dbml",
+    "dbnavigator",
+    "diagramsnet",
+    "dmypy",
+    "duckdb",
+    "editorconfigjetbrains",
+    "envrc",
+    "htmlcov",
+    "ipython",
+    "joblib",
+    "keras",
+    "lycheeverse",
+    "marimo",
+    "Marimo",
+    "mccabe",
+    "mkdocs",
+    "mnesia",
+    "mpeltonen",
+    "mypy",
+    "nosetests",
+    "numpy",
+    "onnx",
+    "picamera",
+    "pipenv",
+    "Pipfile",
+    "pybuilder",
+    "pycache",
+    "pycodestyle",
+    "pydocstyle",
+    "pyenv",
+    "Pyflakes",
+    "pyflow",
+    "pypa",
+    "pypackages",
+    "pypirc",
+    "pyproject",
+    "pytest",
+    "pytype",
+    "replstate",
+    "ropeproject",
+    "safetensors",
+    "scrapy",
+    "Scrapy",
+    "sdist",
+    "SNHU",
+    "SNHU's",
+    "sonarlint",
+    "Spyder",
+    "spyderproject",
+    "spyproject",
+    "streamlit",
+    "Streamlit",
+    "testpaths",
+    "Turnitin",
+    "venv",
+    "WCAG",
+    "webassets",
+    "webp",
+    "xfailed"
+  ]
+}
