@@ -11,7 +11,7 @@ from collections.abc import Sequence
 from pathlib import Path
 from urllib.parse import quote, urlsplit
 
-from SOE.src.soe import ConfigurationError, load_plan, read_json, require
+from soe import ConfigurationError, load_plan, read_json, require
 
 
 def github_identity(remote: str) -> str:
