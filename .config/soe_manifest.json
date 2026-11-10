@@ -15,7 +15,7 @@
   },
   "policy": {
     "course_root": "${WORKSPACE_ROOT}",
-    "script_root": "${SOE_ROOT}/scripts",
+    "script_root": "${soe_root}/scripts",
     "minimum_free_space_bytes": 5368709120,
     "network_timeout_seconds": 60,
     "allow_os_release_upgrade": false,
@@ -28,7 +28,7 @@
       "LOG_DIR",
       "TEMP",
       "COURSE_REPOSITORY",
-      "SOE_ROOT",
+      "soe_root",
       "WORKSPACE_ROOT"
     ],
     "retry_profiles": {

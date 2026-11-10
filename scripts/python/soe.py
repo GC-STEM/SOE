@@ -654,16 +654,16 @@ def make_plan(
 
 
 def load_plan(
-    SOE_ROOT: Path,
+    soe_root: Path,
     workspace: Path,
     mode: str = "auto",
     profile_id: str = "github_codespaces",
     schema_path: str | Path | None = None,
 ) -> LoadedPlan:
-    SOE_ROOT, workspace = SOE_ROOT.resolve(), workspace.resolve()
+    soe_root, workspace = soe_root.resolve(), workspace.resolve()
     schema_path = schema_path or os.environ.get("SOE_SCHEMA_PATH")
     schema = load_schema(schema_path)
-    soe = read_json(SOE_ROOT / ".config/soe_manifest.json")
+    soe = read_json(soe_root / ".config/soe_manifest.json")
     course_path = workspace / ".config/cso_manifest.json"
     if mode == "auto":
         mode = "cso" if course_path.is_file() else "soe"
@@ -844,7 +844,7 @@ def verify_course_interpreter(plan: Plan, environment: str | Path) -> None:
 
 
 def setup(
-    plan: LoadedPlan, workspace: Path, SOE_ROOT: Path, mode: str
+    plan: LoadedPlan, workspace: Path, soe_root: Path, mode: str
 ) -> None:
     check_host(plan)
     geteuid: Callable[[], int] = getattr(os, "geteuid")
@@ -858,7 +858,7 @@ def setup(
                 Path(__file__).resolve(),
                 "install-system",
                 "--soe-root",
-                SOE_ROOT,
+                soe_root,
                 "--workspace",
                 workspace,
                 "--mode",
@@ -1023,7 +1023,7 @@ def main(argv: list[str] | None = None) -> int:
         "--soe-root",
         type=Path,
         default=Path(
-            os.environ.get("SOE_ROOT", Path(__file__).resolve().parents[2])
+            os.environ.get("soe_root", Path(__file__).resolve().parents[2])
         ),
     )
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
@@ -1049,7 +1049,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         plan = load_plan(
-            args.SOE_ROOT,
+            args.soe_root,
             args.workspace,
             args.mode,
             args.deployment,
@@ -1072,7 +1072,7 @@ def main(argv: list[str] | None = None) -> int:
             setup(
                 plan,
                 args.workspace.resolve(),
-                args.SOE_ROOT.resolve(),
+                args.soe_root.resolve(),
                 plan["configuration_kind"],
             )
         elif args.action == "verify":

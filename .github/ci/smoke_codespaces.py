@@ -9,7 +9,7 @@ from pathlib import Path
 
 from test_soe import python_overlay
 
-SOE = Path(os.environ.get("SOE_ROOT", "/opt/gc-stem/soe"))
+SOE = Path(os.environ.get("soe_root", "/opt/gc-stem/soe"))
 
 
 def execute(*args):

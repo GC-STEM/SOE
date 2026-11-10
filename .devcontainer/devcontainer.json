@@ -6,7 +6,7 @@
   "updateRemoteUserUID": true,
   "overrideCommand": true,
   "containerEnv": {
-    "SOE_ROOT": "/opt/gc-stem/soe"
+    "soe_root": "/opt/gc-stem/soe"
   },
   "postCreateCommand": [
     "/opt/gc-stem/runtime/bin/python",

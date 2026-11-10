@@ -97,7 +97,7 @@ Every course, including an SOE-only course, declares a CSO manifest:
     "repository_name": "example-course"
   },
   "baseline": {
-    "path": "${SOE_ROOT}/.config/soe_manifest.json",
+    "path": "${soe_root}/.config/soe_manifest.json",
     "baseline_id": "stem_computing_baseline"
   },
   "control": {

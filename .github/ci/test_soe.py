@@ -48,7 +48,7 @@ def course_manifest():
             "repository_name": "test-course",
         },
         "baseline": {
-            "path": "${SOE_ROOT}/.config/soe_manifest.json",
+            "path": "${soe_root}/.config/soe_manifest.json",
             "baseline_id": "stem_computing_baseline",
         },
         "control": {
@@ -375,27 +375,27 @@ class SchemaSourceTests(unittest.TestCase):
 
 
 class EntryPointTests(unittest.TestCase):
-    def test_resolver_defaults_to_SOE_ROOT(self):
+    def test_resolver_defaults_to_soe_root(self):
         with (
             patch.dict(os.environ),
             patch("soe.load_plan", return_value={}) as load,
             patch("sys.stdout"),
         ):
-            os.environ.pop("SOE_ROOT", None)
+            os.environ.pop("soe_root", None)
             self.assertEqual(soe_main(["plan"]), 0)
             self.assertEqual(load.call_args.args[0], ROOT)
 
-    def test_resolver_honors_configured_SOE_ROOT(self):
+    def test_resolver_honors_configured_soe_root(self):
         selected = ROOT / "selected-soe"
         with (
-            patch.dict(os.environ, {"SOE_ROOT": str(selected)}),
+            patch.dict(os.environ, {"soe_root": str(selected)}),
             patch("soe.load_plan", return_value={}) as load,
             patch("sys.stdout"),
         ):
             self.assertEqual(soe_main(["plan"]), 0)
             self.assertEqual(load.call_args.args[0], selected)
 
-    def test_launcher_defaults_to_SOE_ROOT(self):
+    def test_launcher_defaults_to_soe_root(self):
         with (
             patch("launch_codespaces.launch_url") as launch,
             patch("launch_codespaces.webbrowser.open") as browser,

@@ -58,11 +58,11 @@ def git(workspace: Path, *args: str) -> str:
 
 def launch_url(
     workspace: Path,
-    SOE_ROOT: Path,
+    soe_root: Path,
     branch: str | None = None,
     schema_path: str | Path | None = None,
 ) -> str:
-    plan = load_plan(SOE_ROOT, workspace, schema_path=schema_path)
+    plan = load_plan(soe_root, workspace, schema_path=schema_path)
     launcher = plan["resolved"]["launch_profiles"].get("github_codespaces")
     require(
         launcher and launcher["enabled"] and launcher["kind"] == "codespaces",
@@ -124,7 +124,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     try:
         url = launch_url(
             args.workspace.resolve(),
-            args.SOE_ROOT.resolve(),
+            args.soe_root.resolve(),
             args.branch,
             schema_path=args.schema,
         )
