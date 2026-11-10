@@ -1,6 +1,6 @@
 # Working in GC-STEM/soe
 
-Atlas maintains GC-STEM's Standard Operating Environment (SOE), shared
+SOE maintains GC-STEM's Standard Operating Environment (SOE), shared
 automation, and course-specific overlay (CSO) support. Its implemented
 Codespaces path is a headless Linux environment. Preserve the documented
 development status; implemented code is not proof of a qualified release,
@@ -22,7 +22,7 @@ institutional approval, or support for every platform described by the schema.
   lifecycle placeholders and software-lifecycle documents under `docs/` do
   not establish working features or approved requirements.
 - The canonical manifest schema belongs to
-  `GC-STEM/.github/schemas/manifest.schema.json`. Atlas owns its SOE and
+  `GC-STEM/.github/schemas/manifest.schema.json`. SOE owns its SOE and
   implementation; selected courses own their CSO manifests and coursework.
   `crs000` owns master course templates. Wikis are maintained separately.
 
@@ -31,16 +31,16 @@ institutional approval, or support for every platform described by the schema.
 - Use the SOE manifest's concrete Ubuntu/Python selections and documented
   release policy. Do not advance the baseline from the date or a moving tag.
   Keep compatible-version rules and course grading-runtime constraints intact.
-- Keep Atlas root and the selected workspace distinct. Course operations use
+- Keep SOE root and the selected workspace distinct. Course operations use
   the actual course checkout, not an inherited template identity or an assumed
   home-directory layout. Every course declares its own CSO, including SOE-only
-  courses; Atlas SOE-only resolution does not require a course manifest.
+  courses; SOE SOE-only resolution does not require a course manifest.
 - Preserve schema validation, duplicate-key rejection, composition before
   filtering, approved override boundaries, reference and dependency checks,
   path containment, and isolated course environments.
 - Use an explicit `--schema` or `SOE_SCHEMA_PATH` for offline or unpublished
   schema work. A missing explicit source must fail without network fallback.
-  Do not add a maintained schema copy to Atlas; an image's generated schema
+  Do not add a maintained schema copy to SOE; an image's generated schema
   dependency is separate from the source of truth.
 - Distinguish inspection from mutation. Planning and verification do not
   provision packages; setup, system installation, generated-file writes,
@@ -50,7 +50,7 @@ institutional approval, or support for every platform described by the schema.
 - Install course packages only through their declared isolated environments.
   Preserve unrelated workspace settings, credentials, personal Git identity,
   and global editor settings. Runtime startup must not silently update
-  packages, switch Atlas revisions, or initiate authentication.
+  packages, switch SOE revisions, or initiate authentication.
 
 ## Changes and communication
 
@@ -79,7 +79,7 @@ for commands and prerequisites. Use the manifest-selected interpreter;
 current hosted CI uses Python 3.12. Install pinned CI dependencies into the
 intended test environment before checks.
 
-- Configuration: run `python .github/ci/check_repository.py`. Atlas checks
+- Configuration: run `python .github/ci/check_repository.py`. SOE checks
   Git/EditorConfig/IDE EOL agreement; do not copy another repository's policy.
 - Documentation: check relevant Bash fences and internal links; verify
   changed external destinations when available. Syntax is not functionality.

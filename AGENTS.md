@@ -1,6 +1,6 @@
-# Working in GC-STEM Atlas
+# Working in GC-STEM SOE
 
-Atlas provides the shared Standard Operating Environment (SOE), runtime
+SOE provides the shared Standard Operating Environment (SOE), runtime
 automation, and course-specific overlay (CSO) support. The current implemented
 Codespaces path is headless Linux; other platform declarations and lifecycle
 placeholders must not be presented as implemented or qualified features.
@@ -28,11 +28,11 @@ resource and current implementation rather than inventing new policy.
 
 ## Ownership and scope
 
-- Atlas owns the SOE manifest and shared implementation. The canonical schema
+- SOE owns the SOE manifest and shared implementation. The canonical schema
   is maintained in `GC-STEM/.github/schemas/manifest.schema.json`; courses own
   their `.config/cso_manifest.json` and coursework. `crs000` owns master course
   templates, and wikis are independent repositories.
-- Use the actual selected Atlas and workspace checkouts. Do not substitute
+- Use the actual selected SOE and workspace checkouts. Do not substitute
   a template or faculty repository for the destination course identity.
 - Shared community guidance is available from
   [GC-STEM/.github](https://github.com/GC-STEM/.github). GitHub-displayed
@@ -69,7 +69,7 @@ clear language without inventing institutional commitments or permissions.
   semantics, applicability, dependency closure, and path containment.
 - Use the actual canonical schema via `--schema` or `SOE_SCHEMA_PATH` for
   offline/unpublished work. Invalid explicit paths fail without fallback.
-  Do not maintain a second schema source in Atlas.
+  Do not maintain a second schema source in SOE.
 - Planning, verification, and `devcontainer --check` avoid provisioning,
   but may fetch a schema. Setup, system installation, generated-file writes,
   Docker builds, and smoke qualification have real effects; keep those effects
@@ -88,7 +88,7 @@ clear language without inventing institutional commitments or permissions.
 
 ## Setup and validation
 
-Run commands from the Atlas root using the manifest-selected Python
+Run commands from the SOE root using the manifest-selected Python
 interpreter; current CI uses Python 3.12. Install CI dependencies into the
 intended isolated test environment. See [CI guidance](.github/ci/README.md)
 and actual workflows for pinned tools and installation details.

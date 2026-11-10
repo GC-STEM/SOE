@@ -2,11 +2,11 @@
 applyTo: ".github/ci/**,.github/workflows/**,.config/requirements-automation.txt"
 ---
 
-# Atlas validation and CI
+# SOE validation and CI
 
 Supplement the [root agent guide](../../AGENTS.md) and
 [repository instructions](../copilot-instructions.md) with these practices
-for Atlas validation, tests, workflows, and shared resolver dependencies.
+for SOE validation, tests, workflows, and shared resolver dependencies.
 
 ## Scope and sources
 
@@ -14,14 +14,14 @@ for Atlas validation, tests, workflows, and shared resolver dependencies.
   [CI guide](../ci/README.md) before changing behavior. Use actual workflow
   definitions to establish triggers, guards, runtimes, and tool versions;
   report relevant stale documentation separately.
-- Atlas maintains SOE automation and its qualification. Course assignment
+- SOE maintains SOE automation and its qualification. Course assignment
   tests and assessment rules belong to their course repositories.
   Organization community defaults belong to `GC-STEM/.github`.
 - Keep repository-specific required files and IDE samples in
   `core-policy.json`. Keep CI dependencies and shared resolver dependencies
   consistent with their respective requirements files; avoid unrelated
   upgrades or importing course dependency requirements into the tooling.
-- EOL agreement checks are active in the Atlas validator. Preserve resolved
+- EOL agreement checks are active in the SOE validator. Preserve resolved
   Git attributes, EditorConfig, and applicable explicit IDE settings rather
   than copying `.github` repository's disabled EOL-check policy.
   Policy agreement does not establish final student submission bytes.
@@ -84,7 +84,7 @@ for Atlas validation, tests, workflows, and shared resolver dependencies.
 ## Tests and qualification
 
 - Use the manifest/workflow-selected Python and pinned CI dependencies.
-  Atlas's configured Python checks cover both `.github/ci` and `scripts`;
+  SOE's configured Python checks cover both `.github/ci` and `scripts`;
   use the isolated Ruff settings from the workflows.
 - Add focused behavioral regression coverage for changed code, including
   relevant rejection paths. Use temporary repositories, controlled fixtures,

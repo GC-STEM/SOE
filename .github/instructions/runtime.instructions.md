@@ -11,7 +11,7 @@ environment manifest, resolver, launchers, and platform scripts. Read
 
 ## Implemented behavior and ownership
 
-- Atlas owns the SOE manifest and shared runtime implementation. The canonical
+- SOE owns the SOE manifest and shared runtime implementation. The canonical
   manifest schema belongs to `GC-STEM/.github/schemas/manifest.schema.json`;
   each selected course owns its `.config/cso_manifest.json` and coursework.
 - Inspect actual entry points before using an apparent lifecycle script.
@@ -29,7 +29,7 @@ environment manifest, resolver, launchers, and platform scripts. Read
 
 ## Resolution and schema handling
 
-- Keep Atlas root, selected workspace, and course root distinct. Use actual
+- Keep SOE root, selected workspace, and course root distinct. Use actual
   selected checkouts and explicit CLI arguments where ambiguity is possible.
   Avoid assumptions about home directories, clone names, or a faculty remote.
 - Preserve SOE-only resolution without a course manifest and the requirement
@@ -40,7 +40,7 @@ environment manifest, resolver, launchers, and platform scripts. Read
 - Use `--schema` or `SOE_SCHEMA_PATH` with the actual canonical file for
   offline or unpublished-schema checks. An invalid explicit path must fail;
   do not silently fall back to a different source or maintain a second schema
-  inside Atlas. Default resolution can fetch the canonical published schema.
+  inside SOE. Default resolution can fetch the canonical published schema.
 - Preserve deep-copy composition before deployment filtering. Duplicate IDs,
   unknown references, unauthorized or overlapping overrides, unsupported
   applicable adapters, and missing applicable dependencies are failures.
@@ -81,9 +81,9 @@ environment manifest, resolver, launchers, and platform scripts. Read
   `python -m unittest discover -s .github/ci -p test_soe.py -v`.
   Set `SOE_SCHEMA_PATH` to the selected canonical file for reproducible offline
   tests. Use synthetic course fixtures and mocked external effects.
-- `python scripts/python/soe.py plan --mode soe` inspects the Atlas plan;
+- `python scripts/python/soe.py plan --mode soe` inspects the SOE plan;
   `python scripts/python/soe.py devcontainer --mode soe --check` checks generated
-  configuration drift. Run from the Atlas root with dependencies and the
+  configuration drift. Run from the SOE root with dependencies and the
   intended schema source available.
 - Add behavior tests for changed composition, selectors, override permissions,
   paths, isolation, versions, and failure handling. Documentation-only changes

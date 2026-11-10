@@ -32,7 +32,7 @@ RUN python3 -m venv /opt/gc-stem/runtime \
     && /opt/gc-stem/runtime/bin/python -m pip install --no-cache-dir \
         -r /opt/gc-stem/requirements-automation.txt
 
-# Fetch the single schema source; keep the build artifact outside Atlas.
+# Fetch the single schema source; keep the build artifact outside SOE.
 ADD --chmod=0444 https://raw.githubusercontent.com/GC-STEM/.github/refs/heads/main/schemas/manifest.schema.json /opt/gc-stem/schema/manifest.schema.json
 COPY .config/soe_manifest.json /opt/gc-stem/soe/.config/
 COPY scripts/python/soe.py scripts/python/devcontainer_config.py scripts/python/launch_codespaces.py /opt/gc-stem/soe/scripts/python/

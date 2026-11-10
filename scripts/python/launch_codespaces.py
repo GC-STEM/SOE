@@ -109,7 +109,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
     parser.add_argument(
-        "--atlas-root", type=Path, default=Path(__file__).resolve().parents[2]
+        "--soe-root", type=Path, default=Path(__file__).resolve().parents[2]
     )
     parser.add_argument(
         "--branch", help="Explicit branch, including for a detached checkout"

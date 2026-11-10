@@ -75,11 +75,11 @@ CSO and run its actual tests in addition to environment verification.
 
 The image contains a build-time SOE snapshot and matching automation under
 `/opt/gc-stem/soe`. Rebuild after changing shared SOE requirements; setup
-does not fetch a different Atlas checkout or silently change that snapshot.
+does not fetch a different SOE checkout or silently change that snapshot.
 
 ## Course overlays
 
-Schema 3.2 uses `.config/soe_manifest.json` in Atlas and
+Schema 3.2 uses `.config/soe_manifest.json` in SOE and
 `.config/cso_manifest.json` in each course. It uses `manifest_type: "soe"`,
 `configuration_kind: "soe"` or `"cso"`, and `capability_bindings`. Legacy
 manifest shapes must be migrated explicitly before using this resolver.
@@ -123,13 +123,13 @@ Other assets, removal operations, sources, and installers require an explicit
 adapter implementation; they are not silently skipped.
 
 Course repositories need their own `.devcontainer/devcontainer.json`.
-They do not inherit Atlas configuration automatically. After publishing an
+They do not inherit SOE configuration automatically. After publishing an
 SOE image to the chosen registry, generate a course configuration from its
 resolved requirements, supplying that image's immutable reference:
 
 ```bash
 python /path/to/soe/scripts/python/soe.py devcontainer \
-  --atlas-root /path/to/soe --workspace /path/to/course \
+  --soe-root /path/to/soe --workspace /path/to/course \
   --image registry.example/soe@sha256:REPLACE_WITH_PUBLISHED_DIGEST
 ```
 
@@ -150,7 +150,7 @@ Create the host directory if needed:
 mkdir -p "$HOME/Repos"
 ```
 
-On the host, run this command from the Atlas checkout to build the image
+On the host, run this command from the SOE checkout to build the image
 and open an interactive container shell:
 
 ```bash
@@ -188,7 +188,7 @@ repeated setup, and launcher identity. A GitHub-hosted editor attachment is
 still needed to check the actual managed editor and extension installation.
 
 The schema is maintained only in
-`GC-STEM/.github/schemas/manifest.schema.json`. Atlas does not carry a
+`GC-STEM/.github/schemas/manifest.schema.json`. SOE does not carry a
 repository copy. The manifest's `$schema` reference points to that canonical
 published file.
 
@@ -199,7 +199,7 @@ The resolver and launcher both support `--schema`; an invalid selected path
 fails rather than silently switching to the network.
 
 Image builds fetch the canonical published schema into
-`/opt/gc-stem/schema/manifest.schema.json`, outside the Atlas checkout, and
+`/opt/gc-stem/schema/manifest.schema.json`, outside the SOE checkout, and
 set `SOE_SCHEMA_PATH` to it. This is a generated runtime dependency, not a
 second maintained source. The built environment can validate offline.
 Publish schema changes in `.github` before building a container that needs

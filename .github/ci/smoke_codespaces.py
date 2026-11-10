@@ -9,7 +9,7 @@ from pathlib import Path
 
 from test_soe import python_overlay
 
-ATLAS = Path(os.environ.get("SOE_ROOT", "/opt/gc-stem/soe"))
+SOE = Path(os.environ.get("SOE_ROOT", "/opt/gc-stem/soe"))
 
 
 def execute(*args):
@@ -21,8 +21,8 @@ def main():
     assert platform.python_implementation() == "CPython"
     assert platform.python_version_tuple()[:2] == ("3", "12")
     runtime = "/opt/gc-stem/runtime/bin/python"
-    script = ATLAS / "scripts/python/soe.py"
-    execute(runtime, script, "verify", "--workspace", ATLAS, "--mode", "soe")
+    script = SOE / "scripts/python/soe.py"
+    execute(runtime, script, "verify", "--workspace", SOE, "--mode", "soe")
     with tempfile.TemporaryDirectory() as directory:
         workspace = Path(directory)
         (workspace / ".config").mkdir()

@@ -18,9 +18,9 @@ instructions before editing.
   manifest, Dockerfile, generated configuration, tests, and documentation.
   Moving tags and current release dates must not advance the baseline
   automatically. Distinguish patch maintenance from a reviewed baseline change.
-- Keep the build-time Atlas snapshot and automation under `/opt/gc-stem/soe`
+- Keep the build-time SOE snapshot and automation under `/opt/gc-stem/soe`
   distinct from the selected workspace. Runtime setup must not silently fetch
-  or switch Atlas revisions. Rebuild when the bundled requirements change.
+  or switch SOE revisions. Rebuild when the bundled requirements change.
 - Preserve the canonical schema source in `GC-STEM/.github`. The generated
   image dependency under `/opt/gc-stem/schema` is not a second maintained
   source. Publish schema changes before builds that require them; use the
@@ -36,10 +36,10 @@ instructions before editing.
   managed editor extensions. Startup must not upgrade packages or launch login.
 - Keep generated configuration consistent with `devcontainer_config.py` and
   resolved requirements. Check drift with
-  `python scripts/python/soe.py devcontainer --mode soe --check` from Atlas,
+  `python scripts/python/soe.py devcontainer --mode soe --check` from SOE,
   using the intended schema source and installed automation dependencies.
 - Course repositories need their own committed devcontainer configuration;
-  they do not inherit Atlas's files. Course generation requires the published
+  they do not inherit SOE's files. Course generation requires the published
   SOE image reference documented by the project. Use an immutable image
   reference rather than inventing a registry artifact or publication workflow.
 - Keep the SOE extension set aligned with `.vscode/extensions.json` and the
@@ -53,7 +53,7 @@ instructions before editing.
 
 - Derive Codespaces owner/repository from the selected checkout's validated
   GitHub origin and use its selected branch. A detached checkout requires an
-  explicit branch. Never substitute a template, faculty, or Atlas identity
+  explicit branch. Never substitute a template, faculty, or SOE identity
   for the destination course repository.
 - Preserve origin validation, branch validation, required extension checks,
   and devcontainer availability checks before producing a launch URL.

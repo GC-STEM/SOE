@@ -857,7 +857,7 @@ def setup(
                 sys.executable,
                 Path(__file__).resolve(),
                 "install-system",
-                "--atlas-root",
+                "--soe-root",
                 SOE_ROOT,
                 "--workspace",
                 workspace,
@@ -1020,7 +1020,7 @@ def main(argv: list[str] | None = None) -> int:
         choices=("plan", "install-system", "setup", "verify", "devcontainer"),
     )
     parser.add_argument(
-        "--atlas-root",
+        "--soe-root",
         type=Path,
         default=Path(
             os.environ.get("SOE_ROOT", Path(__file__).resolve().parents[2])

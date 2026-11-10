@@ -573,7 +573,7 @@
   },
   "software_sources": {
     "atlas_repository": {
-      "display_name": "Atlas Shared Baseline and Automation Repository",
+      "display_name": "SOE Shared Baseline and Automation Repository",
       "source_type": "source_repository",
       "base_uri": "https://github.com/GC-STEM/soe",
       "adapter_id": "github_repository_source",
@@ -4013,7 +4013,7 @@
       "box_artifact_ids": [
         "soe_virtualbox_amd64"
       ],
-      "notes": "Planned entry point: run vagrant up in Atlas for the SOE or in a course checkout for its CSO. Respect explicit provider and environment preferences; prefer VirtualBox otherwise. Enable only after launcher, host acquisition, guest provisioning, and matching box artifacts are implemented and qualified."
+      "notes": "Planned entry point: run vagrant up in SOE for the SOE or in a course checkout for its CSO. Respect explicit provider and environment preferences; prefer VirtualBox otherwise. Enable only after launcher, host acquisition, guest provisioning, and matching box artifacts are implemented and qualified."
     },
     "github_codespaces": {
       "display_name": "Run in GitHub Codespaces",

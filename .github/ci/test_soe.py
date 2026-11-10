@@ -386,7 +386,7 @@ class EntryPointTests(unittest.TestCase):
             self.assertEqual(load.call_args.args[0], ROOT)
 
     def test_resolver_honors_configured_SOE_ROOT(self):
-        selected = ROOT / "selected-atlas"
+        selected = ROOT / "selected-soe"
         with (
             patch.dict(os.environ, {"SOE_ROOT": str(selected)}),
             patch("soe.load_plan", return_value={}) as load,

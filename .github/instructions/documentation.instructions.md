@@ -2,15 +2,15 @@
 applyTo: "README.md,docs/**,scripts/README.md,.devcontainer/README.md,.github/ci/README.md"
 ---
 
-# Atlas documentation
+# SOE documentation
 
 Supplement the [root agent guide](../../AGENTS.md) and
 [repository instructions](../copilot-instructions.md) with these practices
-for Atlas's technical references, setup guidance, and educational materials.
+for SOE's technical references, setup guidance, and educational materials.
 
 ## Accuracy and ownership
 
-- Describe Atlas as the shared STEM Standard Operating Environment (SOE),
+- Describe SOE as the shared STEM Standard Operating Environment (SOE),
   shared automation, and related libraries. Course-specific overlays (CSOs),
   assignments, grading requirements, and student work belong to their
   respective repositories and official learning environment.
@@ -26,7 +26,7 @@ for Atlas's technical references, setup guidance, and educational materials.
   rebuild an existing environment or publish an image.
 - Reference centrally owned community policies and manifest schemas with
   appropriate absolute links. Do not imply those files or workflows are
-  automatically copied into Atlas or course repositories.
+  automatically copied into SOE or course repositories.
 
 ## Explain the environment clearly
 
@@ -36,7 +36,7 @@ for Atlas's technical references, setup guidance, and educational materials.
 - Explain the documented baseline selection rule, while obtaining concrete
   OS and Python release values from the current manifest. Avoid changing a
   runtime target simply because a newer release exists.
-- Distinguish the Atlas checkout from the selected course checkout.
+- Distinguish the SOE checkout from the selected course checkout.
   Identify where a command runs, which interpreter it uses, and which
   files or environment it can change.
 - Preserve course-environment isolation and destination-specific settings.
