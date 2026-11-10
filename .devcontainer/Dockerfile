@@ -7,7 +7,7 @@ LABEL org.opencontainers.image.title="GC-STEM SOE (headless)" \
       org.opencontainers.image.source="https://github.com/GC-STEM/soe" \
       org.opencontainers.image.description="Ubuntu 24.04 / Python 3.12 SOE for Codespaces"
 
-ENV LANG=C.UTF-8 TZ=Etc/UTC soe_root=/opt/gc-stem/soe \
+ENV LANG=C.UTF-8 TZ=Etc/UTC SOE_ROOT=/opt/gc-stem/soe \
     SOE_SCHEMA_PATH=/opt/gc-stem/schema/manifest.schema.json \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 

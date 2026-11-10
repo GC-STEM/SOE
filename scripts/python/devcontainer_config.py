@@ -22,7 +22,7 @@ def configuration(
         "init": True,
         "updateRemoteUserUID": True,
         "overrideCommand": True,
-        "containerEnv": {"soe_root": "/opt/gc-stem/soe"},
+        "containerEnv": {"SOE_ROOT": "/opt/gc-stem/soe"},
         "postCreateCommand": common
         + ["setup", "--workspace", "${containerWorkspaceFolder}"],
         "postStartCommand": common

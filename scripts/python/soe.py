@@ -1023,7 +1023,7 @@ def main(argv: list[str] | None = None) -> int:
         "--soe-root",
         type=Path,
         default=Path(
-            os.environ.get("soe_root", Path(__file__).resolve().parents[2])
+            os.environ.get("SOE_ROOT", Path(__file__).resolve().parents[2])
         ),
     )
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
@@ -1078,7 +1078,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.action == "verify":
             verify(plan, args.editor)
         elif args.action == "devcontainer":
-            from SOE.src.devcontainer_config import configuration
+            from devcontainer_config import configuration
 
             generated = configuration(plan, image=args.image)
             target = args.workspace / ".devcontainer/devcontainer.json"
