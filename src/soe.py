@@ -1078,7 +1078,7 @@ def main(argv: list[str] | None = None) -> int:
         elif args.action == "verify":
             verify(plan, args.editor)
         elif args.action == "devcontainer":
-            from devcontainer_config import configuration
+            from SOE.src.devcontainer_config import configuration
 
             generated = configuration(plan, image=args.image)
             target = args.workspace / ".devcontainer/devcontainer.json"
