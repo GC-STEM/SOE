@@ -6,25 +6,25 @@
   "updateRemoteUserUID": true,
   "overrideCommand": true,
   "containerEnv": {
-    "ATLAS_ROOT": "/opt/gc-stem/atlas"
+    "SOE_ROOT": "/opt/gc-stem/soe"
   },
   "postCreateCommand": [
     "/opt/gc-stem/runtime/bin/python",
-    "/opt/gc-stem/atlas/scripts/python/soe.py",
+    "/opt/gc-stem/soe/scripts/python/soe.py",
     "setup",
     "--workspace",
     "${containerWorkspaceFolder}"
   ],
   "postStartCommand": [
     "/opt/gc-stem/runtime/bin/python",
-    "/opt/gc-stem/atlas/scripts/python/soe.py",
+    "/opt/gc-stem/soe/scripts/python/soe.py",
     "verify",
     "--workspace",
     "${containerWorkspaceFolder}"
   ],
   "postAttachCommand": [
     "/opt/gc-stem/runtime/bin/python",
-    "/opt/gc-stem/atlas/scripts/python/soe.py",
+    "/opt/gc-stem/soe/scripts/python/soe.py",
     "verify",
     "--editor",
     "--workspace",

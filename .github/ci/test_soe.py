@@ -48,7 +48,7 @@ def course_manifest():
             "repository_name": "test-course",
         },
         "baseline": {
-            "path": "${ATLAS_ROOT}/.config/soe_manifest.json",
+            "path": "${SOE_ROOT}/.config/soe_manifest.json",
             "baseline_id": "stem_computing_baseline",
         },
         "control": {
@@ -285,7 +285,7 @@ class ResolverTests(unittest.TestCase):
         ):
             with self.subTest(hook=hook):
                 script = Path(generated[hook][1]).relative_to(
-                    "/opt/gc-stem/atlas"
+                    "/opt/gc-stem/soe"
                 )
                 self.assertTrue((ROOT / script).is_file())
 
@@ -375,34 +375,34 @@ class SchemaSourceTests(unittest.TestCase):
 
 
 class EntryPointTests(unittest.TestCase):
-    def test_resolver_defaults_to_atlas_root(self):
+    def test_resolver_defaults_to_SOE_ROOT(self):
         with (
             patch.dict(os.environ),
             patch("soe.load_plan", return_value={}) as load,
             patch("sys.stdout"),
         ):
-            os.environ.pop("ATLAS_ROOT", None)
+            os.environ.pop("SOE_ROOT", None)
             self.assertEqual(soe_main(["plan"]), 0)
             self.assertEqual(load.call_args.args[0], ROOT)
 
-    def test_resolver_honors_configured_atlas_root(self):
+    def test_resolver_honors_configured_SOE_ROOT(self):
         selected = ROOT / "selected-atlas"
         with (
-            patch.dict(os.environ, {"ATLAS_ROOT": str(selected)}),
+            patch.dict(os.environ, {"SOE_ROOT": str(selected)}),
             patch("soe.load_plan", return_value={}) as load,
             patch("sys.stdout"),
         ):
             self.assertEqual(soe_main(["plan"]), 0)
             self.assertEqual(load.call_args.args[0], selected)
 
-    def test_launcher_defaults_to_atlas_root(self):
+    def test_launcher_defaults_to_SOE_ROOT(self):
         with (
             patch("launch_codespaces.launch_url") as launch,
             patch("launch_codespaces.webbrowser.open") as browser,
             patch("sys.stdout"),
             patch("sys.stderr"),
         ):
-            launch.return_value = "https://codespaces.new/GC-STEM/atlas"
+            launch.return_value = "https://codespaces.new/GC-STEM/soe"
             self.assertEqual(launch_main(["--print-url"]), 0)
             self.assertEqual(launch.call_args.args[1], ROOT)
             browser.assert_not_called()
@@ -419,11 +419,11 @@ class EntryPointTests(unittest.TestCase):
 class LauncherTests(unittest.TestCase):
     def test_github_remote_forms(self):
         for remote in (
-            "https://github.com/GC-STEM/atlas.git",
-            "git@github.com:GC-STEM/atlas.git",
-            "ssh://git@github.com/GC-STEM/atlas.git",
+            "https://github.com/GC-STEM/soe.git",
+            "git@github.com:GC-STEM/soe.git",
+            "ssh://git@github.com/GC-STEM/soe.git",
         ):
-            self.assertEqual(github_identity(remote), "GC-STEM/atlas")
+            self.assertEqual(github_identity(remote), "GC-STEM/soe")
 
     def test_credentials_and_other_hosts_rejected(self):
         for remote in (

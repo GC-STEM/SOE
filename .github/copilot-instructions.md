@@ -1,4 +1,4 @@
-# Working in GC-STEM/atlas
+# Working in GC-STEM/soe
 
 Atlas maintains GC-STEM's Standard Operating Environment (SOE), shared
 automation, and course-specific overlay (CSO) support. Its implemented

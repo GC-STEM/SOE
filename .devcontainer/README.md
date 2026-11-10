@@ -65,8 +65,8 @@ Starting the environment does not upgrade packages or launch authentication.
 Run an explicit check inside the container:
 
 ```bash
-/opt/gc-stem/runtime/bin/python /opt/gc-stem/atlas/scripts/python/soe.py verify
-/opt/gc-stem/runtime/bin/python /opt/gc-stem/atlas/scripts/python/soe.py verify --editor
+/opt/gc-stem/runtime/bin/python /opt/gc-stem/soe/scripts/python/soe.py verify
+/opt/gc-stem/runtime/bin/python /opt/gc-stem/soe/scripts/python/soe.py verify --editor
 ```
 
 The editor check requires an attached VS Code session. The runtime check does
@@ -74,7 +74,7 @@ not claim to verify editor extensions. Faculty should use the assignment's
 CSO and run its actual tests in addition to environment verification.
 
 The image contains a build-time SOE snapshot and matching automation under
-`/opt/gc-stem/atlas`. Rebuild after changing shared SOE requirements; setup
+`/opt/gc-stem/soe`. Rebuild after changing shared SOE requirements; setup
 does not fetch a different Atlas checkout or silently change that snapshot.
 
 ## Course overlays
@@ -97,7 +97,7 @@ Every course, including an SOE-only course, declares a CSO manifest:
     "repository_name": "example-course"
   },
   "baseline": {
-    "path": "${ATLAS_ROOT}/.config/soe_manifest.json",
+    "path": "${SOE_ROOT}/.config/soe_manifest.json",
     "baseline_id": "stem_computing_baseline"
   },
   "control": {
@@ -128,8 +128,8 @@ SOE image to the chosen registry, generate a course configuration from its
 resolved requirements, supplying that image's immutable reference:
 
 ```bash
-python /path/to/atlas/scripts/python/soe.py devcontainer \
-  --atlas-root /path/to/atlas --workspace /path/to/course \
+python /path/to/soe/scripts/python/soe.py devcontainer \
+  --atlas-root /path/to/soe --workspace /path/to/course \
   --image registry.example/soe@sha256:REPLACE_WITH_PUBLISHED_DIGEST
 ```
 
@@ -177,8 +177,8 @@ docker run --rm -it \
 ```bash
 docker build -t gc-stem-soe:test -f .devcontainer/Dockerfile .
 docker run --rm \
-  --mount "type=bind,source=$PWD,target=/workspaces/atlas,readonly" \
-  --workdir /workspaces/atlas gc-stem-soe:test \
+  --mount "type=bind,source=$PWD,target=/workspaces/soe,readonly" \
+  --workdir /workspaces/soe gc-stem-soe:test \
   /opt/gc-stem/runtime/bin/python .github/ci/smoke_codespaces.py
 ```
 

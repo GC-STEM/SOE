@@ -27,13 +27,13 @@ jobs:
       - name: Test resolver and generated configuration with Python 3.12
         run: |
           docker run --rm \
-            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspaces/atlas,readonly" \
-            --workdir /workspaces/atlas gc-stem-soe:ci \
+            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspaces/soe,readonly" \
+            --workdir /workspaces/soe gc-stem-soe:ci \
             /opt/gc-stem/runtime/bin/python -m unittest discover \
             -s .github/ci -p test_soe.py -v
       - name: Test non-root SOE and isolated course setup
         run: |
           docker run --rm \
-            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspaces/atlas,readonly" \
-            --workdir /workspaces/atlas gc-stem-soe:ci \
+            --mount "type=bind,source=$GITHUB_WORKSPACE,target=/workspaces/soe,readonly" \
+            --workdir /workspaces/soe gc-stem-soe:ci \
             /opt/gc-stem/runtime/bin/python .github/ci/smoke_codespaces.py

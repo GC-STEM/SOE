@@ -18,7 +18,7 @@ instructions before editing.
   manifest, Dockerfile, generated configuration, tests, and documentation.
   Moving tags and current release dates must not advance the baseline
   automatically. Distinguish patch maintenance from a reviewed baseline change.
-- Keep the build-time Atlas snapshot and automation under `/opt/gc-stem/atlas`
+- Keep the build-time Atlas snapshot and automation under `/opt/gc-stem/soe`
   distinct from the selected workspace. Runtime setup must not silently fetch
   or switch Atlas revisions. Rebuild when the bundled requirements change.
 - Preserve the canonical schema source in `GC-STEM/.github`. The generated

@@ -13,7 +13,7 @@ def configuration(
         )
     common = [
         "/opt/gc-stem/runtime/bin/python",
-        "/opt/gc-stem/atlas/scripts/python/soe.py",
+        "/opt/gc-stem/soe/scripts/python/soe.py",
     ]
     result: dict[str, Any] = {
         "name": "GC-STEM SOE - Ubuntu 24.04 / Python 3.12",
@@ -22,7 +22,7 @@ def configuration(
         "init": True,
         "updateRemoteUserUID": True,
         "overrideCommand": True,
-        "containerEnv": {"ATLAS_ROOT": "/opt/gc-stem/atlas"},
+        "containerEnv": {"SOE_ROOT": "/opt/gc-stem/soe"},
         "postCreateCommand": common
         + ["setup", "--workspace", "${containerWorkspaceFolder}"],
         "postStartCommand": common

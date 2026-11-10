@@ -9,7 +9,7 @@ from pathlib import Path
 
 from test_soe import python_overlay
 
-ATLAS = Path(os.environ.get("ATLAS_ROOT", "/opt/gc-stem/atlas"))
+ATLAS = Path(os.environ.get("SOE_ROOT", "/opt/gc-stem/soe"))
 
 
 def execute(*args):

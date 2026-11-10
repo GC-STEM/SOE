@@ -4,10 +4,10 @@
 FROM ubuntu:24.04
 
 LABEL org.opencontainers.image.title="GC-STEM SOE (headless)" \
-      org.opencontainers.image.source="https://github.com/GC-STEM/atlas" \
+      org.opencontainers.image.source="https://github.com/GC-STEM/soe" \
       org.opencontainers.image.description="Ubuntu 24.04 / Python 3.12 SOE for Codespaces"
 
-ENV LANG=C.UTF-8 TZ=Etc/UTC ATLAS_ROOT=/opt/gc-stem/atlas \
+ENV LANG=C.UTF-8 TZ=Etc/UTC SOE_ROOT=/opt/gc-stem/soe \
     SOE_SCHEMA_PATH=/opt/gc-stem/schema/manifest.schema.json \
     PIP_DISABLE_PIP_VERSION_CHECK=1
 
@@ -34,11 +34,11 @@ RUN python3 -m venv /opt/gc-stem/runtime \
 
 # Fetch the single schema source; keep the build artifact outside Atlas.
 ADD --chmod=0444 https://raw.githubusercontent.com/GC-STEM/.github/refs/heads/main/schemas/manifest.schema.json /opt/gc-stem/schema/manifest.schema.json
-COPY .config/soe_manifest.json /opt/gc-stem/atlas/.config/
-COPY scripts/python/soe.py scripts/python/devcontainer_config.py scripts/python/launch_codespaces.py /opt/gc-stem/atlas/scripts/python/
+COPY .config/soe_manifest.json /opt/gc-stem/soe/.config/
+COPY scripts/python/soe.py scripts/python/devcontainer_config.py scripts/python/launch_codespaces.py /opt/gc-stem/soe/scripts/python/
 RUN chmod 0755 /opt/gc-stem/schema \
-    && /opt/gc-stem/runtime/bin/python /opt/gc-stem/atlas/scripts/python/soe.py \
-        install-system --workspace /opt/gc-stem/atlas --mode soe \
+    && /opt/gc-stem/runtime/bin/python /opt/gc-stem/soe/scripts/python/soe.py \
+        install-system --workspace /opt/gc-stem/soe --mode soe \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && if getent group 1000 > /dev/null; then \
@@ -59,8 +59,8 @@ USER vscode
 # Local Compose bind-mounts the host's Repos folder at /home/vscode/Repos.
 # Codespaces supplies its workspace mount and working directory separately.
 WORKDIR /workspaces
-RUN /opt/gc-stem/runtime/bin/python /opt/gc-stem/atlas/scripts/python/soe.py \
-    verify --workspace /opt/gc-stem/atlas --mode soe
+RUN /opt/gc-stem/runtime/bin/python /opt/gc-stem/soe/scripts/python/soe.py \
+    verify --workspace /opt/gc-stem/soe --mode soe
 
 # VS Code and extensions are provided by Codespaces at editor attachment.
 CMD ["sleep", "infinity"]

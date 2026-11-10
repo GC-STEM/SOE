@@ -10,12 +10,12 @@
   "automation_release": "1.0.4",
   "control": {
     "status": "draft",
-    "source_repository": "https://github.com/GC-STEM/atlas",
+    "source_repository": "https://github.com/GC-STEM/SOE",
     "change_summary": "Implement STEM leadership's approved previous-Ubuntu-LTS policy (latest LTS minus one): Ubuntu 24.04 LTS and its CPython 3.12.x runtime. Apply the same version line to Codio Boxes/VMs, native platform bindings, Codespaces and local Docker. Allow patch updates within the approved lines; changes to a new LTS/Python minor require a reviewed SOE release. Existing provider environments still require migration/qualification. Do not perform OS release upgrades or automatic interpreter downgrades. This implementation remains a draft pending release qualification."
   },
   "policy": {
     "course_root": "${WORKSPACE_ROOT}",
-    "script_root": "${ATLAS_ROOT}/scripts",
+    "script_root": "${SOE_ROOT}/scripts",
     "minimum_free_space_bytes": 5368709120,
     "network_timeout_seconds": 60,
     "allow_os_release_upgrade": false,
@@ -28,7 +28,7 @@
       "LOG_DIR",
       "TEMP",
       "COURSE_REPOSITORY",
-      "ATLAS_ROOT",
+      "SOE_ROOT",
       "WORKSPACE_ROOT"
     ],
     "retry_profiles": {
@@ -575,7 +575,7 @@
     "atlas_repository": {
       "display_name": "Atlas Shared Baseline and Automation Repository",
       "source_type": "source_repository",
-      "base_uri": "https://github.com/GC-STEM/atlas",
+      "base_uri": "https://github.com/GC-STEM/soe",
       "adapter_id": "github_repository_source",
       "allowed_hosts": [
         "github.com",

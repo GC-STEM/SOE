@@ -654,16 +654,16 @@ def make_plan(
 
 
 def load_plan(
-    atlas_root: Path,
+    SOE_ROOT: Path,
     workspace: Path,
     mode: str = "auto",
     profile_id: str = "github_codespaces",
     schema_path: str | Path | None = None,
 ) -> LoadedPlan:
-    atlas_root, workspace = atlas_root.resolve(), workspace.resolve()
+    SOE_ROOT, workspace = SOE_ROOT.resolve(), workspace.resolve()
     schema_path = schema_path or os.environ.get("SOE_SCHEMA_PATH")
     schema = load_schema(schema_path)
-    soe = read_json(atlas_root / ".config/soe_manifest.json")
+    soe = read_json(SOE_ROOT / ".config/soe_manifest.json")
     course_path = workspace / ".config/cso_manifest.json"
     if mode == "auto":
         mode = "cso" if course_path.is_file() else "soe"
@@ -844,7 +844,7 @@ def verify_course_interpreter(plan: Plan, environment: str | Path) -> None:
 
 
 def setup(
-    plan: LoadedPlan, workspace: Path, atlas_root: Path, mode: str
+    plan: LoadedPlan, workspace: Path, SOE_ROOT: Path, mode: str
 ) -> None:
     check_host(plan)
     geteuid: Callable[[], int] = getattr(os, "geteuid")
@@ -858,7 +858,7 @@ def setup(
                 Path(__file__).resolve(),
                 "install-system",
                 "--atlas-root",
-                atlas_root,
+                SOE_ROOT,
                 "--workspace",
                 workspace,
                 "--mode",
@@ -1023,7 +1023,7 @@ def main(argv: list[str] | None = None) -> int:
         "--atlas-root",
         type=Path,
         default=Path(
-            os.environ.get("ATLAS_ROOT", Path(__file__).resolve().parents[2])
+            os.environ.get("SOE_ROOT", Path(__file__).resolve().parents[2])
         ),
     )
     parser.add_argument("--workspace", type=Path, default=Path.cwd())
@@ -1049,7 +1049,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         plan = load_plan(
-            args.atlas_root,
+            args.SOE_ROOT,
             args.workspace,
             args.mode,
             args.deployment,
@@ -1072,7 +1072,7 @@ def main(argv: list[str] | None = None) -> int:
             setup(
                 plan,
                 args.workspace.resolve(),
-                args.atlas_root.resolve(),
+                args.SOE_ROOT.resolve(),
                 plan["configuration_kind"],
             )
         elif args.action == "verify":
