@@ -1,22 +1,24 @@
 {
-    "recommendations": [
-        "EditorConfig.EditorConfig",
-        "ms-vscode.powershell",
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "charliermarsh.ruff",
-        "hediet.vscode-drawio",
-        "bierner.markdown-preview-github-styles",
-        "yzane.markdown-pdf",
-        "streetsidesoftware.code-spell-checker"
-    ],
+  "recommendations": [
+    "EditorConfig.EditorConfig",
+    "ms-vscode.powershell",
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "charliermarsh.ruff",
+    "hediet.vscode-drawio",
+    "bierner.markdown-preview-github-styles",
+    "davidanson.vscode-markdownlint",
+    "yzhang.markdown-all-in-one",
+    "yzane.markdown-pdf",
+    "streetsidesoftware.code-spell-checker"
+  ],
 
-    "unwantedRecommendations": [
-        "ms-vscode-remote.remote-containers",
-        "ms-azuretools.vscode-containers",
-        "donjayamanne.githistory",
-        "eamodio.gitlens",
-        "mechatroner.rainbow-csv",
-        "dotjoshjohnson.xml"
-    ]
+  "unwantedRecommendations": [
+    "ms-vscode-remote.remote-containers",
+    "ms-azuretools.vscode-containers",
+    "donjayamanne.githistory",
+    "eamodio.gitlens",
+    "mechatroner.rainbow-csv",
+    "dotjoshjohnson.xml"
+  ]
 }
