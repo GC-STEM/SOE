@@ -18,3 +18,5 @@ The SOE is divided into platform-specific repositories for easier management and
 - [**Windows**](https://github.com/GC-STEM/SOE-Windows)
 - [**macOS**](https://github.com/GC-STEM/SOE-macOS)
 - [**Linux**](https://github.com/GC-STEM/SOE-Linux)
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/GC-STEM/SOE)
