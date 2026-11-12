@@ -143,13 +143,13 @@ def load_schema(schema_path: str | Path | None = None) -> JsonObject:
 def validate(
     data: JsonObject, schema: JsonObject, definition: str | None = None
 ) -> None:
-    contract = schema
+    contract: JsonObject = schema
     if definition:
         contract = {"$ref": f"#/$defs/{definition}", "$defs": schema["$defs"]}
     errors = sorted(
-        Draft202012Validator(
+        cast(Any, Draft202012Validator(
             contract, format_checker=FormatChecker()
-        ).iter_errors(data),
+        )).iter_errors(data),
         key=lambda error: str(error.json_path),
     )
     require(
@@ -872,22 +872,22 @@ def setup(
     geteuid: Callable[[], int] = getattr(os, "geteuid")
     require(geteuid() != 0, "Course setup must run as the development user")
     if any(not apt_installed(package) for package in plan["packages"]):
-        run(
-            [
-                "sudo",
-                "-n",
-                sys.executable,
-                Path(__file__).resolve(),
-                "install-system",
-                "--soe-root",
-                soe_root,
-                "--workspace",
-                workspace,
-                "--mode",
-                mode,
-            ]
-            + (["--schema", plan["schema_path"]] if plan["schema_path"] else [])
-        )
+        command: list[str | Path] = [
+            "sudo",
+            "-n",
+            sys.executable,
+            Path(__file__).resolve(),
+            "install-system",
+            "--soe-root",
+            soe_root,
+            "--workspace",
+            workspace,
+            "--mode",
+            mode,
+        ]
+        if plan["schema_path"]:
+            command.extend(["--schema", plan["schema_path"]])
+        run(command)
     verify(plan, editor=False, course_packages=False)
     for environment in plan["environments"].values():
         require(
