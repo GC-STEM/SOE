@@ -4,17 +4,25 @@
 [CmdletBinding()]
 param(
     [ValidatePattern('^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')]
-    [string]$CourseRepo = 'GC-STEM/crs000'
+    [string]$CourseRepo,
+    [switch]$SoeOnly
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 
+if ([bool]$CourseRepo -eq [bool]$SoeOnly) {
+    throw 'Specify exactly one of -SoeOnly or -CourseRepo OWNER/REPO.'
+}
+
 $repos = Join-Path $HOME 'Repos'
 $soeRoot = Join-Path $repos '_shared\SOE'
-$courseName = ($CourseRepo -split '/')[1]
-$courseRoot = Join-Path $repos $courseName
+$courseRoot = $null
+if ($CourseRepo) {
+    $courseName = ($CourseRepo -split '/')[1]
+    $courseRoot = Join-Path $repos $courseName
+}
 $logs = Join-Path $repos '_logs'
 New-Item -ItemType Directory -Force $logs | Out-Null
 Start-Transcript -Path (Join-Path $logs 'sandbox-setup.log') -Force
@@ -61,25 +69,30 @@ try {
         throw 'This script is intended for Windows Sandbox.'
     }
 
-    Write-Host 'Downloading SOE and course repositories...'
+    Write-Host 'Downloading the SOE repository...'
     Get-Repository 'GC-STEM/SOE' $soeRoot
-    Get-Repository $CourseRepo $courseRoot
 
     $soe = Get-Content (Join-Path $soeRoot '.config\soe_manifest.json') `
         -Raw | ConvertFrom-Json
-    $cso = Get-Content (Join-Path $courseRoot '.config\cso_manifest.json') `
-        -Raw | ConvertFrom-Json
-
-    if ($soe.schema_version -ne '3.2' -or
-        $cso.schema_version -ne '3.2' -or
-        $cso.manifest_type -ne 'course' -or
-        $cso.baseline.baseline_id -ne $soe.baseline.baseline_id -or
-        $cso.baseline.path -ne '${SOE_ROOT}/.config/soe_manifest.json') {
-        throw 'The course CSO must use the current SOE schema and baseline.'
+    if ($soe.schema_version -ne '3.2' -or $soe.manifest_type -ne 'soe') {
+        throw 'The SOE manifest must use schema 3.2.'
     }
 
-    if (@($cso.overrides).Count -gt 0) {
-        throw 'CSO overrides require an implemented Windows resolver.'
+    $cso = $null
+    if (-not $SoeOnly) {
+        Write-Host "Downloading course repository: $CourseRepo ..."
+        Get-Repository $CourseRepo $courseRoot
+        $cso = Get-Content (Join-Path $courseRoot '.config\cso_manifest.json') `
+            -Raw | ConvertFrom-Json
+        if ($cso.schema_version -ne '3.2' -or
+            $cso.manifest_type -ne 'course' -or
+            $cso.baseline.baseline_id -ne $soe.baseline.baseline_id -or
+            $cso.baseline.path -ne '${SOE_ROOT}/.config/soe_manifest.json') {
+            throw 'The course CSO must use the current SOE schema and baseline.'
+        }
+        if (@($cso.overrides).Count -gt 0) {
+            throw 'CSO overrides require an implemented Windows resolver.'
+        }
     }
 
     # Compose the Windows SOE and additive CSO bindings.
@@ -88,7 +101,10 @@ try {
         $bindings[$entry.Name] = $entry.Value
     }
 
-    $extensions = Get-PropertyValue $cso.additions 'platform_extensions'
+    $extensions = $null
+    if ($cso) {
+        $extensions = Get-PropertyValue $cso.additions 'platform_extensions'
+    }
     $windows = Get-PropertyValue $extensions 'windows'
     $extra = Get-PropertyValue $windows 'capability_bindings'
 
@@ -239,7 +255,12 @@ try {
     Write-Host ''
     Write-Host 'Windows Sandbox setup completed successfully.'
     Write-Host "SOE:    $soeRoot"
-    Write-Host "Course: $courseRoot"
+    if ($SoeOnly) {
+        Write-Host 'Mode:   SOE only'
+    }
+    else {
+        Write-Host "Course: $courseRoot (SOE + CSO)"
+    }
     Write-Host "Log:    $logs\sandbox-setup.log"
 }
 catch {

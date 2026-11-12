@@ -9,6 +9,6 @@
   <ClipboardRedirection>Enable</ClipboardRedirection>
   <MemoryInMB>8192</MemoryInMB>
   <LogonCommand>
-    <Command>powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -Command "$p=Join-Path $env:TEMP 'setup_windows_sandbox.ps1'; curl.exe -fLsS --retry 5 -o $p 'https://raw.githubusercontent.com/GC-STEM/SOE/main/scripts/powershell/setup_windows_sandbox.ps1'; if ($LASTEXITCODE -ne 0) { throw 'Bootstrap download failed' }; &amp; $p -CourseRepo 'GC-STEM/crs000'"</Command>
+    <Command>powershell.exe -NoExit -NoProfile -ExecutionPolicy Bypass -Command "$p=Join-Path $env:TEMP 'setup_windows_sandbox.ps1'; curl.exe -fLsS --retry 5 -o $p 'https://raw.githubusercontent.com/GC-STEM/SOE/main/scripts/powershell/setup_windows_sandbox.ps1'; if ($LASTEXITCODE -ne 0) { throw 'Bootstrap download failed' }; &amp; $p -SoeOnly"</Command>
   </LogonCommand>
 </Configuration>

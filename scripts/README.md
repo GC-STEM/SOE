@@ -20,6 +20,12 @@ From **Windows PowerShell 5.1 or PowerShell 7+**, in your local SOE checkout:
 & "$HOME/Repos/_shared/SOE/scripts/powershell/setup_wsl2.ps1" -CourseRepo 'GC-STEM/crs000'
 ```
 
+To provision **SOE only** in WSL2, omit `-CourseRepo`:
+
+```powershell
+& "$HOME/Repos/_shared/SOE/scripts/powershell/setup_wsl2.ps1"
+```
+
 If WSL or Ubuntu is not yet installed, the command installs Ubuntu 24.04.
 Restart Windows and create your Linux user when prompted, then rerun the same
 command. The second run clones SOE to `~/Repos/_shared/SOE` *inside Ubuntu*,
@@ -69,6 +75,12 @@ The `--course-path` option requires the host path to contain
 `.config/cso_manifest.json`. On Windows, supply the Windows path. The VM mount
 shares a live working tree: use a clean, dedicated verification checkout
 rather than a directory containing unrelated student files.
+
+**Windows host mounts:** Multipass disables privileged mounts by default on
+Windows. If using `--course-path`, review the security implications before
+enabling them with `multipass set local.privileged-mounts=true`. The launcher
+checks this setting before creating the VM. Otherwise use `--course-repo` for
+a public course.
 
 Manage the VM from the host:
 

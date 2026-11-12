@@ -74,6 +74,20 @@ def main() -> int:
     if host_arch not in {"x86_64", "amd64", "aarch64", "arm64"}:
         parser.error(f"Unsupported host architecture: {host_arch}")
 
+    if course_path and platform.system() == "Windows":
+        mounts = subprocess.run(
+            ["multipass", "get", "local.privileged-mounts"],
+            capture_output=True,
+            text=True,
+        )
+        if mounts.returncode or mounts.stdout.strip().lower() != "true":
+            parser.error(
+                "Multipass host mounts are disabled on Windows. "
+                "Review the security implications of "
+                "'multipass set local.privileged-mounts=true' "
+                "or use --course-repo instead."
+            )
+
     exists = subprocess.run(
         ["multipass", "info", args.name], capture_output=True, text=True
     ).returncode == 0

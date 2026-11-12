@@ -97,7 +97,7 @@ Every course, including an SOE-only course, declares a CSO manifest:
     "repository_name": "example-course"
   },
   "baseline": {
-    "path": "${soe_root}/.config/soe_manifest.json",
+    "path": "${SOE_ROOT}/.config/soe_manifest.json",
     "baseline_id": "stem_computing_baseline"
   },
   "control": {
@@ -212,3 +212,14 @@ institutional approval of a release or its funding arrangements.
 
 
 See [WSL2 and Multipass setup](../scripts/README.md) for native Ubuntu guest options.
+
+## Windows Sandbox and Vagrant
+
+The SOE repository's `Sandboxfile.wsb` launches **SOE only** using the shared
+Windows PowerShell 5.1 bootstrap with `-SoeOnly`. Course repositories use the
+same script with `-CourseRepo OWNER/REPO` to apply a CSO. Windows Sandbox is
+for disposable faculty/platform tests; it is not a persistent student workspace.
+
+The `Vagrantfile` remains an intentional, nonfunctional placeholder in both
+repositories. Neither launcher currently provisions a Vagrant desktop VM.
+

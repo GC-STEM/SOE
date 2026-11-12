@@ -3,12 +3,16 @@
 [CmdletBinding()]
 param(
     [ValidatePattern('^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$')]
-    [string]$CourseRepo = 'GC-STEM/crs000',
+    [string]$CourseRepo,
     [switch]$SoeOnly
 )
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
+
+if ($SoeOnly -and $CourseRepo) {
+    throw 'Use -SoeOnly or -CourseRepo, not both.'
+}
 
 if (-not (Get-Command wsl.exe -ErrorAction SilentlyContinue)) {
     throw 'WSL is unavailable. Use Windows 11 or a supported Windows 10 release.'
@@ -49,7 +53,9 @@ else
   bash "$HOME/Repos/_shared/SOE/scripts/bash/setup_ubuntu_runtime.sh" --deployment wsl2 --course-repo "$1"
 fi
 '@
-$kind = if ($SoeOnly) { 'soe-only' } else { 'course' }
-& wsl.exe --distribution $distro -- bash -lc $bootstrap -- $CourseRepo $kind
+$kind = if ($SoeOnly -or -not $CourseRepo) { 'soe-only' } else { 'course' }
+# Supply two stable arguments to Bash even when no course was selected.
+$repositoryArg = if ($CourseRepo) { $CourseRepo } else { 'GC-STEM/SOE' }
+& wsl.exe --distribution $distro -- bash -lc $bootstrap -- $repositoryArg $kind
 if ($LASTEXITCODE -ne 0) { throw 'WSL2 SOE/CSO setup failed.' }
 Write-Host "Ubuntu 24.04 WSL2 SOE/CSO setup succeeded."
