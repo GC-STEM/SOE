@@ -3054,7 +3054,8 @@
           }
         ],
         "architectures": [
-          "x86_64"
+          "x86_64",
+          "arm64"
         ]
       },
       "script": {
@@ -3089,7 +3090,8 @@
             ]
           },
           "architectures": [
-            "x86_64"
+            "x86_64",
+            "arm64"
           ],
           "category": "security_support"
         },
@@ -3112,7 +3114,8 @@
             ]
           },
           "architectures": [
-            "x86_64"
+            "x86_64",
+            "arm64"
           ],
           "category": "bootstrap_prerequisite"
         },
@@ -3135,7 +3138,8 @@
             ]
           },
           "architectures": [
-            "x86_64"
+            "x86_64",
+            "arm64"
           ],
           "category": "security_support"
         },
@@ -3158,7 +3162,8 @@
             ]
           },
           "architectures": [
-            "x86_64"
+            "x86_64",
+            "arm64"
           ],
           "category": "diagnostic_utility"
         },
@@ -3179,7 +3184,8 @@
             ]
           },
           "architectures": [
-            "x86_64"
+            "x86_64",
+            "arm64"
           ]
         },
         "python_command_alias": {
@@ -3708,6 +3714,82 @@
         "runtime_verify"
       ],
       "notes": "Planned explicit Ubuntu 24.04 runner target. Verify manifests, resolution, and runtime requirements without desktop installation, personal settings, or interactive login. VM startup qualification requires a separately suitable runner; nested virtualization is not assumed."
+    },
+    "ubuntu_wsl2_amd64": {
+      "display_name": "Ubuntu 24.04 WSL2 (amd64)",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "ubuntu_headless",
+      "deployment_kind": "local_virtual_machine",
+      "execution_context": "local",
+      "session_type": "headless",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "provider_name": "Microsoft WSL",
+      "profile_adapter_id": "wsl2_guest",
+      "reset_method": "manual_rebuild",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Headless Ubuntu guest using the shared SOE runtime resolver. WSL client and VS Code WSL extension are managed on the Windows host. Experimental until qualified on the target host architecture."
+    },
+    "ubuntu_wsl2_arm64": {
+      "display_name": "Ubuntu 24.04 WSL2 (arm64)",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "ubuntu_headless",
+      "deployment_kind": "local_virtual_machine",
+      "execution_context": "local",
+      "session_type": "headless",
+      "os_release_id": "24.04",
+      "architecture": "arm64",
+      "provider_name": "Microsoft WSL",
+      "profile_adapter_id": "wsl2_guest",
+      "reset_method": "manual_rebuild",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Headless Ubuntu guest using the shared SOE runtime resolver. WSL client and VS Code WSL extension are managed on the Windows host. Experimental until qualified on the target host architecture."
+    },
+    "ubuntu_multipass_amd64": {
+      "display_name": "Ubuntu 24.04 Multipass faculty VM (amd64)",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "ubuntu_headless",
+      "deployment_kind": "local_virtual_machine",
+      "execution_context": "local",
+      "session_type": "headless",
+      "os_release_id": "24.04",
+      "architecture": "x86_64",
+      "provider_name": "Canonical Multipass",
+      "profile_adapter_id": "multipass_guest",
+      "reset_method": "image_reset",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Headless disposable Ubuntu VM for repeatable faculty verification. Multipass is installed and managed on the host. Experimental until qualified on the target host architecture."
+    },
+    "ubuntu_multipass_arm64": {
+      "display_name": "Ubuntu 24.04 Multipass faculty VM (arm64)",
+      "enabled": true,
+      "reference_profile": false,
+      "platform_id": "ubuntu_headless",
+      "deployment_kind": "local_virtual_machine",
+      "execution_context": "local",
+      "session_type": "headless",
+      "os_release_id": "24.04",
+      "architecture": "arm64",
+      "provider_name": "Canonical Multipass",
+      "profile_adapter_id": "multipass_guest",
+      "reset_method": "image_reset",
+      "allowed_workflow_ids": [
+        "runtime_initial_install",
+        "runtime_verify"
+      ],
+      "notes": "Headless disposable Ubuntu VM for repeatable faculty verification. Multipass is installed and managed on the host. Experimental until qualified on the target host architecture."
     }
   },
   "lifecycle_workflows": {
@@ -3836,7 +3918,11 @@
       "deployment_profile_ids": [
         "ubuntu_vagrant_guest",
         "github_codespaces",
-        "github_actions_ubuntu"
+        "github_actions_ubuntu",
+        "ubuntu_wsl2_amd64",
+        "ubuntu_wsl2_arm64",
+        "ubuntu_multipass_amd64",
+        "ubuntu_multipass_arm64"
       ],
       "operating_roles": [
         "automation_service"
@@ -3862,7 +3948,11 @@
       "deployment_profile_ids": [
         "ubuntu_vagrant_guest",
         "github_codespaces",
-        "github_actions_ubuntu"
+        "github_actions_ubuntu",
+        "ubuntu_wsl2_amd64",
+        "ubuntu_wsl2_arm64",
+        "ubuntu_multipass_amd64",
+        "ubuntu_multipass_arm64"
       ],
       "operating_roles": [
         "automation_service"

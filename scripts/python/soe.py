@@ -387,15 +387,33 @@ def make_plan(
         profile["enabled"] and platform["enabled"],
         "Deployment or platform is disabled",
     )
+    supported = {
+        "github_codespaces": ("codespaces_devcontainer", "container"),
+        "ubuntu_wsl2_amd64": ("wsl2_guest", "local_virtual_machine"),
+        "ubuntu_wsl2_arm64": ("wsl2_guest", "local_virtual_machine"),
+        "ubuntu_multipass_amd64": ("multipass_guest", "local_virtual_machine"),
+        "ubuntu_multipass_arm64": ("multipass_guest", "local_virtual_machine"),
+    }
+    expected = supported.get(profile_id)
     require(
-        profile_id == "github_codespaces"
-        and profile.get("profile_adapter_id") == "codespaces_devcontainer",
-        "This adapter implements the Codespaces deployment only",
+        expected is not None
+        and (profile.get("profile_adapter_id"), profile["deployment_kind"])
+        == expected,
+        "Unsupported Ubuntu runtime deployment adapter",
     )
     require(
-        profile["deployment_kind"] == "container"
+        platform_id == "ubuntu_headless"
         and platform["os"]["family"] == "linux",
-        "Expected Linux container deployment",
+        "Expected Ubuntu headless runtime",
+    )
+    require(
+        profile["session_type"]
+        == ("browser_editor" if profile_id == "github_codespaces" else "headless"),
+        "Deployment session type mismatch",
+    )
+    require(
+        profile["architecture"] in platform["os"]["architectures"],
+        "Unsupported runtime architecture",
     )
     references = [
         p for p in profiles.values() if p["enabled"] and p["reference_profile"]
@@ -421,7 +439,7 @@ def make_plan(
         )
         require(
             workflow.get("interaction_mode") == "noninteractive",
-            "Codespaces lifecycle must be noninteractive",
+            "Runtime lifecycle must be noninteractive",
         )
     for action in ("runtime_initial_install", "runtime_verify"):
         require(
@@ -515,7 +533,7 @@ def make_plan(
             ]["authentication"]
             require(
                 not authentication["interactive"],
-                "Codespaces provisioning cannot initiate interactive login",
+                "Runtime provisioning cannot initiate interactive login",
             )
         for setting_id in binding.get("settings_profile_ids", []):
             require(
@@ -596,7 +614,7 @@ def make_plan(
             )
         else:
             raise ConfigurationError(
-                f"Unsupported Codespaces installer: {adapter}"
+                f"Unsupported Ubuntu runtime installer: {adapter}"
             )
     require(
         len(set(environments.values())) == len(environments),

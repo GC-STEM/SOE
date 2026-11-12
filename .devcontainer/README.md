@@ -209,3 +209,6 @@ The first qualified container architecture is Linux AMD64. Native ARM64 and
 the optional Xfce Docker desktop remain separate work. VM launchers remain
 disabled, and Vagrant is optional. Development status does not imply
 institutional approval of a release or its funding arrangements.
+
+
+See [WSL2 and Multipass setup](../scripts/README.md) for native Ubuntu guest options.
