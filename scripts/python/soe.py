@@ -408,7 +408,11 @@ def make_plan(
     )
     require(
         profile["session_type"]
-        == ("browser_editor" if profile_id == "github_codespaces" else "headless"),
+        == (
+            "browser_editor"
+            if profile_id == "github_codespaces"
+            else "headless"
+        ),
         "Deployment session type mismatch",
     )
     require(
