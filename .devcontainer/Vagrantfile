@@ -1,0 +1,7 @@
+# Placeholder: Vagrant deployment is not yet implemented.
+# The GC-STEM SOE and CSO are not provisioned through Vagrant.
+# Do not use `vagrant up` until a supported configuration is available.
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "gc-stem/not-configured"
+end
