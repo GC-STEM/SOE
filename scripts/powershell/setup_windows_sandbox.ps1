@@ -272,7 +272,7 @@ try {
     & $pymanager --version
     Assert-Exit 'Verifying Python Install Manager'
 
-    $runtime = Get-PropertyValue $bindings 'programming_language_runtime'
+    $runtime = $bindings['programming_language_runtime']
 
     if (-not $runtime -or
         $runtime.installer_adapter_id -ne 'pymanager_runtime' -or
