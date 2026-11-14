@@ -63,6 +63,7 @@ $bootstrap = $bootstrap.Replace("`r", '')
 $kind = if ($SoeOnly -or -not $CourseRepo) { 'soe-only' } else { 'course' }
 # Supply two stable arguments to Bash even when no course was selected.
 $repositoryArg = if ($CourseRepo) { $CourseRepo } else { 'GC-STEM/SOE' }
-& wsl.exe --distribution $distro -- bash -lc $bootstrap -- $repositoryArg $kind
+($bootstrap.Replace("`r", '') + "`n") |
+    & wsl.exe --distribution $distro -- bash -s -- $repositoryArg $kind
 if ($LASTEXITCODE -ne 0) { throw 'WSL2 SOE/CSO setup failed.' }
 Write-Host "Ubuntu 24.04 WSL2 SOE/CSO setup succeeded."
