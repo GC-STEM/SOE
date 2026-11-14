@@ -30,8 +30,14 @@ if ($installed -notcontains $distro) {
     exit 0
 }
 
-& wsl.exe --set-version $distro 2
-if ($LASTEXITCODE -ne 0) { throw 'Failed to select WSL 2.' }
+$versionLine = wsl.exe --list --verbose |
+    ForEach-Object { $_ -replace "`0", '' } |
+    Where-Object { $_ -match '^\s*\*?\s*Ubuntu-24\.04\s+' } |
+    Select-Object -First 1
+
+if ($versionLine -notmatch '\s2\s*$') {
+    throw 'Ubuntu-24.04 must use WSL 2.'
+}
 
 # The initial Ubuntu launch may prompt once for a Linux username and password.
 # Use a fixed Bash program; pass the course repo as a positional argument.
