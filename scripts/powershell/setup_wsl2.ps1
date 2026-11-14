@@ -59,6 +59,7 @@ else
   bash "$HOME/Repos/_shared/SOE/scripts/bash/setup_ubuntu_runtime.sh" --deployment wsl2 --course-repo "$1"
 fi
 '@
+$bootstrap = $bootstrap.Replace("`r", '')
 $kind = if ($SoeOnly -or -not $CourseRepo) { 'soe-only' } else { 'course' }
 # Supply two stable arguments to Bash even when no course was selected.
 $repositoryArg = if ($CourseRepo) { $CourseRepo } else { 'GC-STEM/SOE' }
